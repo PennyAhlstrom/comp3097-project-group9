@@ -7,43 +7,37 @@
 
 import SwiftUI
 
-enum Route: Hashable {
-    case course(Course)
-    case detail(Course)
-    case courseProgress(Progress)
-}
+struct CourseListView: View {
+    let courses: [Course]
 
-struct CourseView: View {
-    
-    let courses = Course.sampleCourses
-    @State private var path = NavigationPath() // Add navigation path variable
-    
     var body: some View {
-        NavigationStack(path: $path) { // use the path variable
-            Text("Courses")
-                    .font(.largeTitle)
-                    .bold()
-                    .padding(.vertical, 6)
-            
-            List(courses) { course in
-                NavigationLink(value: Route.course(course)) {
-                    VStack(alignment: .leading) {
-                        Text(course.title).font(.headline)
-                        Text(course.code).font(.subheadline).foregroundColor(.gray)
-                        Text(course.instructor).font(.subheadline).foregroundColor(.gray)
-                    }
+        List(courses) { course in
+            VStack(alignment: .leading, spacing: 4) {
+                Text(course.code)
+                    .font(.headline)
+
+                Text(course.title)
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+
+                Text("Instructor: \(course.instructor)")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+
+                if let goal = course.gradeGoal {
+                    Text("Grade Goal: \(goal)%")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                 }
             }
-            .navigationTitle("CourseDetails")
-            .navigationDestination(for: Route.self) { route in
-                            switch route {
-                            case .detail(let course):
-                                CourseDetailView(course: course, path: $path)
-                            }
-                        }
+            .padding(.vertical, 6)
         }
+        .navigationTitle("Courses")
     }
 }
+
 #Preview {
-    ContentView()
+    NavigationStack {
+        CourseListView(courses: Course.sampleCourses)
+    }
 }
