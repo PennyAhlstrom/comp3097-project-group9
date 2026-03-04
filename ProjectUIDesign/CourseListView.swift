@@ -10,8 +10,9 @@ import SwiftUI
 struct CourseListView: View {
     //let courses: [Course]
     @EnvironmentObject var store: AppStore
-
-
+    @State private var showingAddCourse = false
+    
+    
     var body: some View {
         //List(courses) { course in
         List(store.courses) { course in // ADD
@@ -36,6 +37,21 @@ struct CourseListView: View {
             }
         }
         .navigationTitle("Courses")
+        .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            showingAddCourse = true
+                        } label: {
+                            Label("Add Course", systemImage: "plus")
+                        }
+                    }
+                }
+                .sheet(isPresented: $showingAddCourse) {
+                    CourseAddView()
+                        .environmentObject(store) // pass the same store into the sheet
+                }
+            }
+        }
     }
 }
 
