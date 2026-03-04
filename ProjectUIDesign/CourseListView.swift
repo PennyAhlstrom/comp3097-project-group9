@@ -52,8 +52,6 @@ struct CourseListView: View {
                 }
             }
         }
-    }
-}
 
 //#Preview {
 //    NavigationStack {
