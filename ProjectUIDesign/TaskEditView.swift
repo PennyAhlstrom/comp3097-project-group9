@@ -15,7 +15,7 @@ struct TaskEditView: View {
 
     @State private var title: String
     @State private var type: String
-    @State private var dueDate: String
+    @State private var dueDate: Date = .now
     @State private var isCompleted: Bool
     @State private var isBonus: Bool
     @State private var isPriority: Bool
@@ -26,7 +26,7 @@ struct TaskEditView: View {
         self.task = task
         _title = State(initialValue: task.title)
         _type = State(initialValue: task.type)
-        _dueDate = State(initialValue: task.dueDate)
+        _dueDate = State(initialValue: task.dueDate ?? .now)
         _isCompleted = State(initialValue: task.isCompleted)
         _isBonus = State(initialValue: task.isBonus)
         _isPriority = State(initialValue: task.isPriority)
@@ -40,7 +40,7 @@ struct TaskEditView: View {
                 Section("Task") {
                     TextField("Title", text: $title)
                     TextField("Type", text: $type)
-                    TextField("Due Date", text: $dueDate)
+                    DatePicker("Due Date", selection: $dueDate, displayedComponents: .date)
                 }
 
                 Section("Flags") {
@@ -65,9 +65,10 @@ struct TaskEditView: View {
                     Button("Save") {
                         let updated = Task(
                             id: task.id, // preserve ID
+                            courseID: task.courseID,
                             title: title,
                             type: type,
-                            dueDate: dueDate,
+                            dueDate: task.dueDate ?? dueDate,
                             isCompleted: isCompleted,
                             isBonus: isBonus,
                             isPriority: isPriority,
