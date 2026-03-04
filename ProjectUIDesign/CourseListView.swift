@@ -15,7 +15,7 @@ struct CourseListView: View {
     
     var body: some View {
         //List(courses) { course in
-        List(store.courses) { course in // ADD
+        List(store.courses) { course in 
             NavigationLink {
                 //CourseDetailView(course: course)
                 CourseDetailView(courseID: course.id)
