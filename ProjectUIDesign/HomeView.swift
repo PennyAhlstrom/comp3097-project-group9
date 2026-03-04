@@ -13,29 +13,29 @@ struct HomeView: View {
             List {
                 Section {
                     NavigationLink {
-                        CourseListView(courses: Course.sampleCourses)
-                        //CourseListView() // Remove argument to use store instead of sample array?
+                        //CourseListView(courses: Course.sampleCourses)
+                        CourseListView() // Remove argument to use store instead of sample array?
                     } label: {
                         Label("Courses", systemImage: "book.closed")
                     }
 
                     NavigationLink {
-                        TaskListView(tasks: Task.sampleTasks)
-                        //TaskListView() // Remove argument to use store instead of sample array?
+                        //TaskListView(tasks: Task.sampleTasks)
+                        TaskListView() // Remove argument to use store instead of sample array?
                     } label: {
                         Label("Tasks", systemImage: "checklist")
                     }
 
                     NavigationLink {
-                        ReminderListView(reminders: Reminder.sampleReminders)
-                        //ReminderListView() // Remove argument to use store instead of sample array?
+                        //ReminderListView(reminders: Reminder.sampleReminders)
+                        ReminderListView() // Remove argument to use store instead of sample array?
                     } label: {
                         Label("Reminders", systemImage: "bell")
                     }
 
                     NavigationLink {
-                        ProgressListView(progresses: Progress.sampleProgresses)
-                        //ProgressListView() // Remove argument to use store instead of sample array?
+                        //ProgressListView(progresses: Progress.sampleProgresses)
+                        ProgressListView() // Remove argument to use store instead of sample array?
                     } label: {
                         Label("Progress", systemImage: "chart.line.uptrend.xyaxis")
                     }
