@@ -8,30 +8,57 @@
 import SwiftUI
 
 struct ProgressDetailView: View {
-    let progress: Progress
+    @EnvironmentObject var store: AppStore
+    let progressID: UUID
+
+    @State private var showEdit = false
+    @State private var showDeleteConfirm = false
+
+    private var progress: Progress? { store.progresses.first { $0.id == progressID } }
 
     var body: some View {
-        List {
-            Section("Week") {
-                DetailRow(label: "Week Of", value: progress.weekOf)
-            }
+        Group {
+            if let progress {
+                List {
+                    Section("Week") {
+                        DetailRow(
+                            label: "Week Of",
+                            value: progress.weekOf.yyyyMMdd // from DateFormat
+                        )
+                    }
 
-            Section("Percent Points") {
-                DetailRow(label: "Accumulated", value: progress.accumulatedPercentPoints.map { "\($0, default: "%.0f")" } ?? "—")
-                DetailRow(label: "Used", value: progress.usedPercentPoints.map { "\($0, default: "%.0f")" } ?? "—")
-                DetailRow(label: "Lost", value: progress.lostPercentPoints.map { "\($0, default: "%.0f")" } ?? "—")
-                DetailRow(label: "Max Possible", value: progress.maxPossiblePercent.map { "\($0, default: "%.0f")" } ?? "—")
-            }
+                    Section("Percent Points") {
+                        // used DoubleFormadt for number formatting
+                        DetailRow(label: "Accumulated",  value: progress.accumulatedPercentPoints.whole)
+                        DetailRow(label: "Used", value: progress.usedPercentPoints.whole)
+                        DetailRow(label: "Lost", value: progress.lostPercentPoints.whole)
+                        DetailRow(label: "Max Possible", value: progress.maxPossiblePercent.percent)
+                    }
 
-            Section("Status") {
-                DetailRow(label: "Current Grade", value: progress.currentGradePercent.map { "\($0, default: "%.0f")%" } ?? "—")
-                DetailRow(label: "Can Meet Goal", value: progress.canMeetGoal.map { $0 ? "Yes" : "No" } ?? "—")
+                    Section("Status") {
+                        DetailRow(label: "Current Grade", value: progress.currentGradePercent.percent)
+                        DetailRow(label: "Can Meet Goal", value: progress.canMeetGoal ? "Yes" : "No")
+                    }
+                }
+                .navigationTitle("Progress")
+                
+            } else {
+                Text("Progress not found.")
+                    .foregroundColor(.secondary)
+                    .navigationTitle("Progress")
             }
         }
-        .navigationTitle("Progress")
     }
 }
 
+//#Preview {
+//    NavigationStack { ProgressDetailView(progress: Progress.sampleProgresses[0]) }
+//}
+
 #Preview {
-    NavigationStack { ProgressDetailView(progress: Progress.sampleProgresses[0]) }
+    let store = AppStore()
+    return NavigationStack {
+        ProgressDetailView(progressID: store.progresses.first!.id)
+    }
+    .environmentObject(store)
 }
