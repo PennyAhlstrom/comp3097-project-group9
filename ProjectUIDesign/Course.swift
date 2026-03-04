@@ -8,7 +8,7 @@
 import Foundation
 
 struct Course: Identifiable, Hashable {
-    let id = UUID()
+    let id: UUID
     let code: String
     let title: String
     let instructor: String
@@ -16,6 +16,22 @@ struct Course: Identifiable, Hashable {
     let gradeGoal: Int?
     let startWeek: Date?
     //let tasks: List<Task>?
+
+    init(
+        id: UUID = UUID(),
+        code: String,
+        title: String,
+        instructor: String,
+        gradeGoal: Int?,
+        startWeek: Date?
+    ) {
+        self.id = id
+        self.code = code
+        self.title = title
+        self.instructor = instructor
+        self.gradeGoal = gradeGoal
+        self.startWeek = startWeek
+    }
 }
 
 extension Course {
