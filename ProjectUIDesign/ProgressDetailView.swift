@@ -11,9 +11,6 @@ struct ProgressDetailView: View {
     @EnvironmentObject var store: AppStore
     let progressID: UUID
 
-    @State private var showEdit = false
-    @State private var showDeleteConfirm = false
-
     private var progress: Progress? { store.progresses.first { $0.id == progressID } }
 
     var body: some View {
