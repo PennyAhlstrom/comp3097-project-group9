@@ -13,8 +13,10 @@ struct ProjectUIDesignApp: App {
 
     var body: some Scene {
         WindowGroup {
-            HomeView()
-                .environmentObject(store)
+            NavigationStack {
+                            HomeView()
+                        }
+                        .environmentObject(store)
         }
     }
 }
