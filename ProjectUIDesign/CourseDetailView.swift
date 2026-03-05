@@ -10,12 +10,16 @@ import SwiftUI
 struct CourseDetailView: View {
     @EnvironmentObject var store: AppStore
     let courseID: UUID
-
+    
     @State private var showEdit = false
     @State private var showDeleteConfirm = false
 
     private var course: Course? {
         store.courses.first { $0.id == courseID }
+    }
+    
+    var courseTasks: [Task] {
+        store.tasks.filter { $0.courseID == courseID }
     }
 
     var body: some View {
@@ -27,13 +31,33 @@ struct CourseDetailView: View {
                         DetailRow(label: "Title", value: course.title)
                         DetailRow(label: "Instructor", value: course.instructor)
                     }
-
+                    
+                    Section("Tasks") {
+                        if courseTasks.isEmpty {
+                            Text("No tasks yet").foregroundColor(.secondary)
+                        } else {
+                            ForEach(courseTasks) { task in
+                                NavigationLink {
+                                    TaskDetailView(taskID: task.id)
+                                } label: {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(task.title).font(.headline)
+                                        Text(task.type).font(.caption).foregroundColor(.secondary)
+                                        Text((task.dueDate ?? Date()).yyyyMMdd)
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                    }
+                                }
+                            }
+                        }
+                    }
                     Section("Goals") {
                         DetailRow(label: "Grade Goal", value: course.gradeGoal.map { "\($0)%" } ?? "—")
                         DetailRow(label: "Start Week", value: course.startWeek.map { $0.formatted(date: .abbreviated, time: .omitted) } ?? "—")
                     }
                 }
                 .navigationTitle(course.code)
+                .padding(.bottom, 25)
                 .toolbar {
                     Button("Edit") { showEdit = true }
                 }
