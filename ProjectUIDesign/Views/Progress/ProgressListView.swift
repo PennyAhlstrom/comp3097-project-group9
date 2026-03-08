@@ -11,22 +11,40 @@ struct ProgressListView: View {
     @EnvironmentObject var store: AppStore
 
     var body: some View {
-        List(store.courses) { course in
-            let latest = latestProgress(for: course.id)
-            
-            if latest != nil {
-                NavigationLink {
-                    ProgressDetailView(courseID: course.id)
-                } label: {
-                    courseRow(course: course, progress: latest)
+        ListScreen(title: "Progress", background: .progressBackground) {
+                    Section {
+                        ForEach(store.courses) { course in
+                            let latest = latestProgress(for: course.id)
+
+                            if latest != nil {
+                                NavigationLink {
+                                    ProgressDetailView(courseID: course.id)
+                                } label: {
+                                    courseRow(course: course, progress: latest)
+                                }
+                            } else {
+                                courseRow(course: course, progress: nil)
+                            }
+                        }
+                    }
                 }
-            } else {
-                courseRow(course: course, progress: nil)
             }
-        }
-        .navigationTitle("Progress")
-        .navigationBarTitleDisplayMode(.inline)
-    }
+//        List(store.courses) { course in
+//            let latest = latestProgress(for: course.id)
+//            
+//            if latest != nil {
+//                NavigationLink {
+//                    ProgressDetailView(courseID: course.id)
+//                } label: {
+//                    courseRow(course: course, progress: latest)
+//                }
+//            } else {
+//                courseRow(course: course, progress: nil)
+//            }
+//        }
+//        .navigationTitle("Progress")
+//        .navigationBarTitleDisplayMode(.inline)
+//    }
 
     // MARK: - Course Row UI
     private func courseRow(course: Course, progress: Progress?) -> some View {
