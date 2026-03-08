@@ -12,6 +12,7 @@ struct CardRow<Content: View>: View {
 
     var body: some View {
         content()
+            .frame(maxWidth: .infinity, alignment: .leading) // Make sure the card takes the full width even if it does not have content for it
             .padding()
             .background(
                 RoundedRectangle(cornerRadius: 12)
