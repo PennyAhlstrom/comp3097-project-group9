@@ -16,18 +16,20 @@ struct ReminderListView: View {
         ListScreen(title: "Reminders", background: .remindersBackground) {
             Section {
                 ForEach(store.reminders, id: \.id) { reminder in
-                    NavigationLink {
-                        ReminderDetailView(reminderID: reminder.id)
-                    } label: {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(reminder.message)
-                                .font(.headline)
-
-                            Text("Scheduled: \(reminder.scheduledAt)")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
+                    CardRow {
+                        NavigationLink {
+                            ReminderDetailView(reminderID: reminder.id)
+                        } label: {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(reminder.message)
+                                    .font(.headline)
+                                
+                                Text("Date: \(reminder.scheduledAt)")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding(.vertical, 6)
                         }
-                        .padding(.vertical, 6)
                     }
                 }
             }

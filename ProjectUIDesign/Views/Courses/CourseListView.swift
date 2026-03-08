@@ -17,22 +17,24 @@ struct CourseListView: View {
         ListScreen(title: "Courses", background: .coursesBackground){
                     Section {
                         ForEach(store.courses) { course in
-                            NavigationLink {
-                                CourseDetailView(courseID: course.id)
-                            } label: {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(course.code)
-                                        .font(.headline)
-
-                                    Text(course.title)
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-
-                                    Text("Instructor: \(course.instructor)")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
+                            CardRow {
+                                NavigationLink {
+                                    CourseDetailView(courseID: course.id)
+                                } label: {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(course.code)
+                                            .font(.headline)
+                                        
+                                        Text(course.title)
+                                            .font(.subheadline)
+                                            .foregroundColor(.secondary)
+                                        
+                                        Text("Instructor: \(course.instructor)")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                    }
+                                    .padding(.vertical, 6)
                                 }
-                                .padding(.vertical, 6)
                             }
                         }
                     }
