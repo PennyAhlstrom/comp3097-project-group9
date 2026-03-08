@@ -14,30 +14,53 @@ struct CourseListView: View {
     
     
     var body: some View {
-        //List(courses) { course in
-        List(store.courses) { course in 
-            NavigationLink {
-                //CourseDetailView(course: course)
-                CourseDetailView(courseID: course.id)
-            } label: {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(course.code)
-                        .font(.headline)
-                    
-                    Text(course.title)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                    
-                    Text("Instructor: \(course.instructor)")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    
+        ListScreen(title: "Courses") {
+                    Section {
+                        ForEach(store.courses) { course in
+                            NavigationLink {
+                                CourseDetailView(courseID: course.id)
+                            } label: {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(course.code)
+                                        .font(.headline)
+
+                                    Text(course.title)
+                                        .font(.subheadline)
+                                        .foregroundColor(.secondary)
+
+                                    Text("Instructor: \(course.instructor)")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                .padding(.vertical, 6)
+                            }
+                        }
+                    }
                 }
-                .padding(.vertical, 6)
-            }
-        }
-        .navigationTitle("Courses")
-        .navigationBarTitleDisplayMode(.inline)
+        //        //List(courses) { course in
+//        List(store.courses) { course in
+//            NavigationLink {
+//                //CourseDetailView(course: course)
+//                CourseDetailView(courseID: course.id)
+//            } label: {
+//                VStack(alignment: .leading, spacing: 4) {
+//                    Text(course.code)
+//                        .font(.headline)
+//                    
+//                    Text(course.title)
+//                        .font(.subheadline)
+//                        .foregroundColor(.secondary)
+//                    
+//                    Text("Instructor: \(course.instructor)")
+//                        .font(.caption)
+//                        .foregroundColor(.secondary)
+//                    
+//                }
+//                .padding(.vertical, 6)
+//            }
+//        }
+//        .navigationTitle("Courses")
+//        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
