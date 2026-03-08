@@ -19,39 +19,40 @@ struct ProgressDetailView: View {
                 .sorted { $0.weekOf > $1.weekOf }
 
             let selected = snapshots.first(where: { $0.id == selectedProgressID }) ?? snapshots.first
-
-        Form {
-                    Section("Snapshot") {
-                        Picker("Week Of", selection: $selectedProgressID) {
-                            ForEach(snapshots) { p in
-                                Text(p.weekOf.formatted(.dateTime.year().month().day()))
-                                    .tag(Optional(p.id))
-                            }
+        DetailScreen(background: .progressBackground) {
+            Form {
+                Section("Snapshot") {
+                    Picker("Week Of", selection: $selectedProgressID) {
+                        ForEach(snapshots) { p in
+                            Text(p.weekOf.formatted(.dateTime.year().month().day()))
+                                .tag(Optional(p.id))
                         }
-                        .pickerStyle(.menu)
                     }
-            
-            if let progress = selected {
-                List {
-                    Section("Percent Points") {
-                        // used DoubleFormat for number formatting
-                        DetailRow(label: "Accumulated",  value: progress.accumulatedPercentPoints.whole)
-                        DetailRow(label: "Lost", value: progress.lostPercentPoints.whole)
-                        DetailRow(label: "Used", value: progress.usedPercentPoints.whole)
-
-                    }
-
-                    Section("Status") {
-                        DetailRow(label: "Current Grade", value: progress.currentGradePercent.percent)
-                        DetailRow(label: "Max Possible", value: progress.maxPossiblePercent.percent)
-                        DetailRow(label: "Can Meet Goal", value: progress.canMeetGoal ? "Yes" : "No")
-                    }
+                    .pickerStyle(.menu)
                 }
-                .navigationTitle("Progress")
                 
-            } else {
-                Text("Progress not found.")
-                    .foregroundColor(.secondary)
+                if let progress = selected {
+                    List {
+                        Section("Percent Points") {
+                            // used DoubleFormat for number formatting
+                            DetailRow(label: "Accumulated",  value: progress.accumulatedPercentPoints.whole)
+                            DetailRow(label: "Lost", value: progress.lostPercentPoints.whole)
+                            DetailRow(label: "Used", value: progress.usedPercentPoints.whole)
+                            
+                        }
+                        
+                        Section("Status") {
+                            DetailRow(label: "Current Grade", value: progress.currentGradePercent.percent)
+                            DetailRow(label: "Max Possible", value: progress.maxPossiblePercent.percent)
+                            DetailRow(label: "Can Meet Goal", value: progress.canMeetGoal ? "Yes" : "No")
+                        }
+                    }
+                    .navigationTitle("Progress")
+                    
+                } else {
+                    Text("Progress not found.")
+                        .foregroundColor(.secondary)
+                }
             }
         }
         .navigationTitle("Progress")

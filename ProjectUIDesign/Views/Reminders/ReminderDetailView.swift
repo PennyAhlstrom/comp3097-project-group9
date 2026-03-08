@@ -17,7 +17,7 @@ struct ReminderDetailView: View {
     private var reminder: Reminder? { store.reminders.first { $0.id == reminderID } }
 
     var body: some View {
-        Group {
+        DetailScreen(background: .remindersBackground) {
             if let reminder {
                 List {
                     Section("Reminder") {

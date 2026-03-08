@@ -17,7 +17,7 @@ struct TaskDetailView: View {
     private var task: Task? { store.tasks.first { $0.id == taskID } }
 
     var body: some View {
-        Group {
+        DetailScreen(background: .tasksBackground) {
             if let task {
                 List {
                     Section("Task") {
