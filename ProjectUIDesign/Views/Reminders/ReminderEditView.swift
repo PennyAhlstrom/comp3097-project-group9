@@ -24,7 +24,7 @@ struct ReminderEditView: View {
 
     var body: some View {
         NavigationStack {
-            Form {
+            FormScreen(background: .remindersBackground) {
                 Section("Reminder") {
                     TextField("Message", text: $message)
                     TextField("Scheduled At", text: $scheduledAt)
