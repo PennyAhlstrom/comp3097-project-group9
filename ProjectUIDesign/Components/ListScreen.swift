@@ -17,11 +17,10 @@ struct ListScreen<Content: View>: View {
         }
         .safeAreaInset(edge: .top) {
             Text(title)
-                .font(.title2.weight(.semibold))
+                .font(.title.weight(.semibold))
                 .frame(maxWidth: .infinity)
-                .padding(.top, 4)
-                .padding(.bottom, 8)
-                .background(.background)
+                .padding(.top, 2)
+                .padding(.bottom, 4)
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
