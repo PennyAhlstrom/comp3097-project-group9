@@ -14,7 +14,7 @@ struct CourseListView: View {
     
     
     var body: some View {
-        ListScreen(title: "Courses") {
+        ListScreen(title: "Courses", background: .coursesBackground){
                     Section {
                         ForEach(store.courses) { course in
                             NavigationLink {
