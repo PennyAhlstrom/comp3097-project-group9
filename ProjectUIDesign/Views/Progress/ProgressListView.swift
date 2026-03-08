@@ -14,16 +14,18 @@ struct ProgressListView: View {
         ListScreen(title: "Progress", background: .progressBackground) {
                     Section {
                         ForEach(store.courses) { course in
-                            let latest = latestProgress(for: course.id)
-
-                            if latest != nil {
-                                NavigationLink {
-                                    ProgressDetailView(courseID: course.id)
-                                } label: {
-                                    courseRow(course: course, progress: latest)
+                            CardRow {
+                                let latest = latestProgress(for: course.id)
+                                
+                                if latest != nil {
+                                    NavigationLink {
+                                        ProgressDetailView(courseID: course.id)
+                                    } label: {
+                                        courseRow(course: course, progress: latest)
+                                    }
+                                } else {
+                                    courseRow(course: course, progress: nil)
                                 }
-                            } else {
-                                courseRow(course: course, progress: nil)
                             }
                         }
                     }
