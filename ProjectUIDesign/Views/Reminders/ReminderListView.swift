@@ -13,21 +13,40 @@ struct ReminderListView: View {
     
 
     var body: some View {
-        List(store.reminders) { reminder in
-            NavigationLink {
-                ReminderDetailView(reminderID: reminder.id)
-            } label: {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(reminder.message).font(.headline)
-                    Text("Scheduled: \(reminder.scheduledAt)")
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
+        ListScreen(title: "Reminders", background: .remindersBackground) {
+            Section {
+                ForEach(store.reminders, id: \.id) { reminder in
+                    NavigationLink {
+                        ReminderDetailView(reminderID: reminder.id)
+                    } label: {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(reminder.message)
+                                .font(.headline)
+
+                            Text("Scheduled: \(reminder.scheduledAt)")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        }
+                        .padding(.vertical, 6)
+                    }
                 }
-                .padding(.vertical, 6)
             }
         }
-        .navigationTitle("Reminders")
-        .navigationBarTitleDisplayMode(.inline)
+//        List(store.reminders) { reminder in
+//            NavigationLink {
+//                ReminderDetailView(reminderID: reminder.id)
+//            } label: {
+//                VStack(alignment: .leading, spacing: 4) {
+//                    Text(reminder.message).font(.headline)
+//                    Text("Scheduled: \(reminder.scheduledAt)")
+//                        .font(.subheadline)
+//                        .foregroundColor(.secondary)
+//                }
+//                .padding(.vertical, 6)
+//            }
+//        }
+//        .navigationTitle("Reminders")
+//        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
