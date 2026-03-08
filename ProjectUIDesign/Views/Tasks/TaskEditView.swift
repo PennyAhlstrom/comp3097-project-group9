@@ -36,7 +36,7 @@ struct TaskEditView: View {
 
     var body: some View {
         NavigationStack {
-            Form {
+            FormScreen(background: .tasksBackground) {
                 Section("Task") {
                     TextField("Title", text: $title)
                     TextField("Type", text: $type)
