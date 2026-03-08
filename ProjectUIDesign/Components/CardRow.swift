@@ -15,7 +15,8 @@ struct CardRow<Content: View>: View {
             .padding()
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.white)
+                    //.fill(Color.white)
+                    .fill(Color(.systemBackground)) // used to adapt to dark/light mode
                     .shadow(color: .black.opacity(0.08), radius: 6, y: 3)
             )
             .overlay(
