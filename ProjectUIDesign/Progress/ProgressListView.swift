@@ -25,6 +25,7 @@ struct ProgressListView: View {
             }
         }
         .navigationTitle("Progress")
+        .navigationBarTitleDisplayMode(.inline)
     }
 
     // MARK: - Course Row UI
