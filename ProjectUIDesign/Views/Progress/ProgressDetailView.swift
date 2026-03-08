@@ -51,7 +51,7 @@ struct ProgressDetailView: View {
         DetailScreen(background: .progressBackground) {
             Form {
                 Section("Snapshot") {
-                    Picker("Week Of", selection: $selectedProgressID) {
+                    Picker("Week of:", selection: $selectedProgressID) {
                         ForEach(snapshots) { p in
                             Text(p.weekOf.formatted(.dateTime.year().month().day()))
                                 .tag(Optional(p.id))
@@ -87,11 +87,6 @@ struct ProgressDetailView: View {
                         Text("Week")
                     }
                     
-                    .chartYAxisLabel(position: .leading, alignment: .center) {
-                        Text("Percent")
-                            .rotationEffect(.degrees(-90))
-                    }
-                    
                     .chartXAxis {
                         AxisMarks(values: historyData.map { $0.week }) { value in
                             AxisValueLabel {
@@ -103,7 +98,11 @@ struct ProgressDetailView: View {
                     }
                     
                     .chartYAxis {
-                        AxisMarks(position: .leading)
+                        AxisMarks(position: .leading, values: [0, 20, 40, 60, 80, 100]) { value in
+                            AxisGridLine()
+                            AxisTick()
+                            AxisValueLabel()
+                        }
                     }
                 }
                 
