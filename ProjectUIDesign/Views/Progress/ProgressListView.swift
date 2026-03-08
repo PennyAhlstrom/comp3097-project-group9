@@ -62,28 +62,35 @@ struct ProgressListView: View {
             if let p = progress {
 
                 HStack(spacing: 12) {
-                    Text("Accumulated Percentage Points: \(p.accumulatedPercentPoints.whole)")
+                    Text("Accumulated: \n\(p.accumulatedPercentPoints.whole)")
                         .font(.caption)
                         .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading) // Make each element expand equally and be left aligned
+                        .fontWeight(.semibold)
 
-                    Text("Current Grade: \(p.currentGradePercent.percent)")
+                    Text("Current: \n\(p.currentGradePercent.percent)")
                         .font(.caption)
                         .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .fontWeight(.semibold)
 
-                         Text("Max Possible Grade: \(p.maxPossiblePercent.percent)")
+                         Text("Possible: \n\(p.maxPossiblePercent.percent)")
                         .font(.caption)
                         .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .fontWeight(.semibold)
                 }
 
                 Text(p.canMeetGoal ? "On track to meet goal"
                                    : "At risk of missing goal")
-                    .font(.caption)
+                    .font(.subheadline)
                     .foregroundColor(p.canMeetGoal ? .secondary : .red)
 
             } else {
                 Text("No progress calculated yet")
-                    .font(.caption)
+                    .font(.subheadline)
                     .foregroundColor(.secondary)
+                
             }
         }
         .padding(.vertical, 6)
