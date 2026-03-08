@@ -23,7 +23,7 @@ struct CourseDetailView: View {
     }
 
     var body: some View {
-        Group {
+        DetailScreen(background: .coursesBackground) {
             if let course {
                 List {
                     Section("Course") {
