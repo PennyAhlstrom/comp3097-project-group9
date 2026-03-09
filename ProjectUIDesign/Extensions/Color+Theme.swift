@@ -14,6 +14,12 @@ extension Color {
     static let progressBackground = Color.orange.opacity(0.1)
     static let remindersBackground = Color.purple.opacity(0.1)
     
+    static let coursesCurrentBar = Color.blue
+    
+    static let tasksCurrentBar = Color.green
+    
     static let progressCurrentBar = Color.orange
     static let progressPossibleBar = Color.orange.opacity(0.35)
+    
+    static let remindersCurrentBar = Color.purple
 }
