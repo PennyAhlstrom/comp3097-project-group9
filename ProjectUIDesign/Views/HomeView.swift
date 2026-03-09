@@ -18,6 +18,7 @@ struct HomeView: View {
                     } label: {
                         Label("Courses", systemImage: "book.closed")
                     }
+                    .listRowBackground(Color.coursesBackground)
 
                     NavigationLink {
                         //TaskListView(tasks: Task.sampleTasks)
@@ -25,6 +26,7 @@ struct HomeView: View {
                     } label: {
                         Label("Tasks", systemImage: "checklist")
                     }
+                    .listRowBackground(Color.tasksBackground)
 
                     NavigationLink {
                         //ReminderListView(reminders: Reminder.sampleReminders)
@@ -32,6 +34,7 @@ struct HomeView: View {
                     } label: {
                         Label("Reminders", systemImage: "bell")
                     }
+                    .listRowBackground(Color.remindersBackground)
 
                     NavigationLink {
                         //ProgressListView(progresses: Progress.sampleProgresses)
@@ -39,10 +42,10 @@ struct HomeView: View {
                     } label: {
                         Label("Progress", systemImage: "chart.line.uptrend.xyaxis")
                     }
+                    .listRowBackground(Color.progressBackground)
                 }
             //}
             .navigationTitle("ClassMate")
-                
         }
     }
 }
