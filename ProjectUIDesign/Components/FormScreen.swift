@@ -21,5 +21,6 @@ struct FormScreen<Content: View>: View {
             }
             .scrollContentBackground(.hidden)
         }
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
