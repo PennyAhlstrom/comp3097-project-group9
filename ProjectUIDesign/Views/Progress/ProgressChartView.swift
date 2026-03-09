@@ -144,9 +144,9 @@ struct ProgressChartView: View {
                 
                 HStack(spacing: 16) {
                     HStack(spacing: 6) {
-                        Circle()
+                        RoundedRectangle(cornerRadius: 2)
                             .fill(Color.progressCurrentBar)
-                            .frame(width: 10, height: 10)
+                            .frame(width: 12, height: 12)
                         
                         Text("Current Grade")
                             .font(.caption)
@@ -154,9 +154,9 @@ struct ProgressChartView: View {
                     }
                     
                     HStack(spacing: 6) {
-                        Circle()
+                        RoundedRectangle(cornerRadius: 2)
                             .fill(Color.progressPossibleBar)
-                            .frame(width: 10, height: 10)
+                            .frame(width: 12, height: 12)
                         
                         Text("Max Possible Grade")
                             .font(.caption)
