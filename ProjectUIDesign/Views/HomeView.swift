@@ -16,7 +16,12 @@ struct HomeView: View {
                         //CourseListView(courses: Course.sampleCourses)
                         CourseListView() // Remove argument to use store instead of sample array?
                     } label: {
-                        Label("Courses", systemImage: "book.closed")
+                        Label {
+                            Text("Courses")
+                        } icon: {
+                            Image(systemName: "book.closed")
+                                .foregroundStyle(Color.coursesCurrentBar)
+                        }
                     }
                     .listRowBackground(Color.coursesBackground)
 
@@ -24,7 +29,12 @@ struct HomeView: View {
                         //TaskListView(tasks: Task.sampleTasks)
                         TaskListView() // Remove argument to use store instead of sample array?
                     } label: {
-                        Label("Tasks", systemImage: "checklist")
+                        Label {
+                            Text("Tasks")
+                        } icon: {
+                            Image(systemName: "checklist")
+                                .foregroundStyle(Color.tasksCurrentBar)
+                        }
                     }
                     .listRowBackground(Color.tasksBackground)
 
@@ -32,7 +42,12 @@ struct HomeView: View {
                         //ReminderListView(reminders: Reminder.sampleReminders)
                         ReminderListView() // Remove argument to use store instead of sample array?
                     } label: {
-                        Label("Reminders", systemImage: "bell")
+                        Label {
+                            Text("Reminders")
+                        } icon: {
+                            Image(systemName: "bell")
+                                .foregroundStyle(Color.remindersCurrentBar)
+                        }
                     }
                     .listRowBackground(Color.remindersBackground)
 
@@ -40,7 +55,12 @@ struct HomeView: View {
                         //ProgressListView(progresses: Progress.sampleProgresses)
                         ProgressListView() // Remove argument to use store instead of sample array?
                     } label: {
-                        Label("Progress", systemImage: "chart.line.uptrend.xyaxis")
+                        Label {
+                            Text("Progress")
+                        } icon: {
+                            Image(systemName: "chart.line.uptrend.xyaxis")
+                                .foregroundStyle(Color.progressCurrentBar)
+                        }
                     }
                     .listRowBackground(Color.progressBackground)
                 }
