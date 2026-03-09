@@ -139,10 +139,10 @@ struct ProgressChartView: View {
                 
 
             }
-            HStack {
-                Spacer()
+//            HStack {
+//                Spacer() // Makes the legend right justified
                 
-                HStack(spacing: 16) {
+                VStack(alignment: .leading, spacing: 8) {
                     HStack(spacing: 6) {
                         RoundedRectangle(cornerRadius: 2)
                             .fill(Color.progressCurrentBar)
@@ -163,7 +163,7 @@ struct ProgressChartView: View {
                             .foregroundColor(.secondary)
                     }
                 }
-            }
+//            }
         }
     }
 }
