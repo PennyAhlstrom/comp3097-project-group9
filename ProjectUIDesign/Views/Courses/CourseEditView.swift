@@ -52,6 +52,8 @@ struct CourseEditView: View {
                     Button("Save") {
                         let goal = Int(gradeGoalText)
                         let updated = Course(
+                            id: course.id,
+                            id: course.id,    // keep orijinal ID 
                             code: code,
                             title: title,
                             instructor: instructor,
