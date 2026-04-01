@@ -96,6 +96,28 @@ extension Progress {
             canMeetGoal: true,
             weekOf: date("2026-02-23"), // This should be set as date of Monday for week it was calculated for
             computedAt: Date()
+        ),
+        .init(
+            courseID: Course.SampleIDs.course2,
+            accumulatedPercentPoints: 10,
+            usedPercentPoints: 12,
+            lostPercentPoints: 2,
+            maxPossiblePercent: 98,
+            currentGradePercent: 85,
+            canMeetGoal: true,
+            weekOf: date("2026-03-02"), // This should be set as date of Monday for week it is calculated for
+            computedAt: Date()
+        ),
+        .init(
+            courseID: Course.SampleIDs.course2,
+            accumulatedPercentPoints: 25,
+            usedPercentPoints: 30,
+            lostPercentPoints: 5,
+            maxPossiblePercent: 95,
+            currentGradePercent: 87,
+            canMeetGoal: true,
+            weekOf: date("2026-03-09"), // This should be set as date of Monday for week it is calculated for
+            computedAt: Date()
         )
     ]
 }
