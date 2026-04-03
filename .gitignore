@@ -1,0 +1,52 @@
+# =========================
+# Xcode (User + Workspace)
+# =========================
+
+# User-specific workspace data
+xcuserdata/
+*.xcuserstate
+
+# Workspace user data inside project
+*.xcworkspace/xcuserdata/
+
+# =========================
+# Build & Derived Data
+# =========================
+
+DerivedData/
+build/
+
+# =========================
+# Swift Package Manager
+# =========================
+
+.build/
+
+# Keep Package.resolved to have consistent dependency versions
+# Package.resolved
+
+# =========================
+# Archives
+# =========================
+
+*.xcarchive
+
+# =========================
+# macOS system files
+# =========================
+
+.DS_Store
+
+# =========================
+# Logs / temp
+# =========================
+
+*.log
+*.tmp
+
+# =========================
+# Environment
+# =========================
+
+.env
+.env.*
