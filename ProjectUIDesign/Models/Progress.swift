@@ -52,6 +52,7 @@ extension Progress {
         return formatter.date(from: string)!
     }
     
+    // NOTE: weekOf should always be the Monday for the represented week
     static let sampleProgresses: [Progress] = [
         .init(
             courseID: Course.SampleIDs.course1,
