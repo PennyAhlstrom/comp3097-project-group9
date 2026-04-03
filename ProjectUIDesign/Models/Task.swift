@@ -90,10 +90,42 @@ extension Task {
             weight: 2,
             scorePercent: 0
         ),
-        // — COMP3132 Machine Learning tasks (Nezihe) —
         .init(
             courseID: Course.SampleIDs.course2,
-            title: "Lab 1 - Linear Regression",
+            title: "ML Project Proposal",
+            type: "PROJECT",
+            dueDate: ymd(2026, 3, 1),
+            isCompleted: false,
+            isBonus: false,
+            isPriority: true,
+            weight: 5,
+            scorePercent: 0
+        ),
+        .init(
+            courseID: Course.SampleIDs.course2,
+            title: "Quiz 1",
+            type: "QUIZ",
+            dueDate: ymd(2026, 3, 5),
+            isCompleted: false,
+            isBonus: false,
+            isPriority: true,
+            weight: 2,
+            scorePercent: 0
+        ),
+        .init(
+            courseID: Course.SampleIDs.course2,
+            title: "Assignment 2",
+            type: "ASSIGNMENT",
+            dueDate: ymd(2026, 3, 12),
+            isCompleted: false,
+            isBonus: false,
+            isPriority: false,
+            weight: 10,
+            scorePercent: 0
+        ),
+        .init(
+            courseID: Course.SampleIDs.course3,
+            title: "Cyber Sec Lab 1",
             type: "LAB",
             dueDate: ymd(2026, 2, 10),
             isCompleted: true,
@@ -168,7 +200,18 @@ extension Task {
             isBonus: false,
             isPriority: false,
             weight: 3,
-            scorePercent: 85
+            scorePercent: 85,
+        ),
+        .init(
+            courseID: Course.SampleIDs.course3,
+            title: "Midterm Exam",
+            type: "EXAM",
+            dueDate: ymd(2026, 3, 1),
+            isCompleted: false,
+            isBonus: false,
+            isPriority: true,
+            weight: 20,
+            scorePercent: 0
         )
     ]
 }

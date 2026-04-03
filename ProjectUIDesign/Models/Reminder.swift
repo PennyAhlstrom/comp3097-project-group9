@@ -38,7 +38,6 @@ extension Reminder {
             message: "Midterm Exam",
             scheduledAt: "2026-02-18"
         ),
-        // — Additional reminders (Nezihe) —
         .init(
             message: "ML Midterm prep - review notes",
             scheduledAt: "2026-03-03"
@@ -46,6 +45,18 @@ extension Reminder {
         .init(
             message: "Push React CRUD to GitHub",
             scheduledAt: "2026-02-27"
+        ),
+        .init(
+            message: "Start Project Proposal",
+            scheduledAt: "2026-03-01"
+        ),
+        .init(
+            message: "Submit Final Project",
+            scheduledAt: "2026-04-10"
+        ),
+        .init(
+            message: "Attend Review Session",
+            scheduledAt: "2026-03-15"
         )
     ]
 }

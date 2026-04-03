@@ -74,6 +74,22 @@ extension Course {
             instructor: "Professor Patel",
             gradeGoal: 85,
             startWeek: Date()
+        ),
+        .init(
+            id: UUID(),
+            code: "COMM2000",
+            title: "Communicating Across Contexts",
+            instructor: "Professor Karimian",
+            gradeGoal: 93,
+            startWeek: Date()
+        ),
+        .init(
+            id: UUID(),
+            code: "COMP1151",
+            title: "IT Essentials",
+            instructor: "Professor Danison",
+            gradeGoal: 95,
+            startWeek: Date()
         )
     ]
 }
