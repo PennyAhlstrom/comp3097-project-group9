@@ -14,12 +14,15 @@ struct ReminderEditView: View {
     let reminder: Reminder
 
     @State private var message: String
-    @State private var scheduledAt: String
+    @State private var scheduledAt: Date // Changed from String to Date for DatePicker
 
     init(reminder: Reminder) {
         self.reminder = reminder
         _message = State(initialValue: reminder.message)
-        _scheduledAt = State(initialValue: reminder.scheduledAt)
+        // Parse "yyyy-MM-dd" string to Date, fallback to today
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        _scheduledAt = State(initialValue: formatter.date(from: reminder.scheduledAt) ?? Date())
     }
 
     var body: some View {
@@ -27,7 +30,7 @@ struct ReminderEditView: View {
             FormScreen(background: .remindersBackground) {
                 Section("Reminder") {
                     TextField("Message", text: $message)
-                    TextField("Scheduled At", text: $scheduledAt)
+                    DatePicker("Scheduled At", selection: $scheduledAt, displayedComponents: .date) // Replaced TextField with DatePicker
                 }
             }
             .navigationTitle("Edit Reminder")
@@ -37,10 +40,14 @@ struct ReminderEditView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
+                        // Convert Date back to "yyyy-MM-dd" String to match Reminder model
+                        let formatter = DateFormatter()
+                        formatter.dateFormat = "yyyy-MM-dd"
+                        let dateString = formatter.string(from: scheduledAt)
                         let updated = Reminder(
-                            id: reminder.id, // preserve id for the reminder
+                            id: reminder.id,
                             message: message,
-                            scheduledAt: scheduledAt
+                            scheduledAt: dateString
                         )
                         store.updateReminder(updated)
                         dismiss()

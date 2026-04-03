@@ -56,6 +56,7 @@ extension Task {
             Calendar.current.date(from: DateComponents(year: year, month: month, day: day))!
         }
     static let sampleTasks: [Task] = [
+        // — COMP3097 Mobile Dev II tasks —
         .init(
             courseID: Course.SampleIDs.course1,
             title: "LabEx1",
@@ -88,6 +89,86 @@ extension Task {
             isPriority: true,
             weight: 2,
             scorePercent: 0
+        ),
+        // — COMP3132 Machine Learning tasks (Nezihe) —
+        .init(
+            courseID: Course.SampleIDs.course2,
+            title: "Lab 1 - Linear Regression",
+            type: "LAB",
+            dueDate: ymd(2026, 2, 10),
+            isCompleted: true,
+            isBonus: false,
+            isPriority: false,
+            weight: 5,
+            scorePercent: 92
+        ),
+        .init(
+            courseID: Course.SampleIDs.course2,
+            title: "Midterm Exam",
+            type: "EXAM",
+            dueDate: ymd(2026, 3, 5),
+            isCompleted: false,
+            isBonus: false,
+            isPriority: true,
+            weight: 25,
+            scorePercent: 0
+        ),
+        .init(
+            courseID: Course.SampleIDs.course2,
+            title: "Quiz Week 2",
+            type: "QUIZ",
+            dueDate: ymd(2026, 2, 15),
+            isCompleted: true,
+            isBonus: false,
+            isPriority: false,
+            weight: 2,
+            scorePercent: 88
+        ),
+        // — COMP3134 Cyber Security tasks (Nezihe) —
+        .init(
+            courseID: Course.SampleIDs.course3,
+            title: "Security Audit Report",
+            type: "ASSIGNMENT",
+            dueDate: ymd(2026, 2, 20),
+            isCompleted: true,
+            isBonus: false,
+            isPriority: false,
+            weight: 20,
+            scorePercent: 95
+        ),
+        .init(
+            courseID: Course.SampleIDs.course3,
+            title: "Bonus: CTF Challenge",
+            type: "LAB",
+            dueDate: ymd(2026, 3, 1),
+            isCompleted: false,
+            isBonus: true,
+            isPriority: false,
+            weight: 5,
+            scorePercent: 0
+        ),
+        // — COMP3133 Fullstack Dev II tasks (Nezihe) —
+        .init(
+            courseID: Course.SampleIDs.course4,
+            title: "React CRUD App",
+            type: "ASSIGNMENT",
+            dueDate: ymd(2026, 2, 28),
+            isCompleted: true,
+            isBonus: false,
+            isPriority: false,
+            weight: 15,
+            scorePercent: 90
+        ),
+        .init(
+            courseID: Course.SampleIDs.course4,
+            title: "GraphQL Quiz",
+            type: "QUIZ",
+            dueDate: ymd(2026, 2, 12),
+            isCompleted: true,
+            isBonus: false,
+            isPriority: false,
+            weight: 3,
+            scorePercent: 85
         )
     ]
 }

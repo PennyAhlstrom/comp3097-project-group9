@@ -52,6 +52,7 @@ extension Progress {
         return formatter.date(from: string)!
     }
     
+    // NOTE: weekOf should always be the Monday for the represented week
     static let sampleProgresses: [Progress] = [
         .init(
             courseID: Course.SampleIDs.course1,
@@ -61,7 +62,7 @@ extension Progress {
             maxPossiblePercent: 97,
             currentGradePercent: 80,
             canMeetGoal: true,
-            weekOf: date("2026-01-12"), // This should be set as date of Monday for week it was calculated for
+            weekOf: date("2026-01-12"),
             computedAt: Date()
         ),
         .init(
@@ -72,7 +73,7 @@ extension Progress {
             maxPossiblePercent: 97,
             currentGradePercent: 88,
             canMeetGoal: true,
-            weekOf: date("2026-01-26"), // This should be set as date of Monday for week it was calculated for
+            weekOf: date("2026-01-26"),
             computedAt: Date()
         ),
         .init(
@@ -83,7 +84,7 @@ extension Progress {
             maxPossiblePercent: 94,
             currentGradePercent: 87,
             canMeetGoal: true,
-            weekOf: date("2026-02-09"), // This should be set as date of Monday for week it was calculated for
+            weekOf: date("2026-02-09"),
             computedAt: Date()
         ),
         .init(
@@ -94,7 +95,30 @@ extension Progress {
             maxPossiblePercent: 93,
             currentGradePercent: 89,
             canMeetGoal: true,
-            weekOf: date("2026-02-23"), // This should be set as date of Monday for week it was calculated for
+            weekOf: date("2026-02-23"),
+            computedAt: Date()
+        ),
+        // — COMP3132 Machine Learning progress—
+        .init(
+            courseID: Course.SampleIDs.course2,
+            accumulatedPercentPoints: 7,
+            usedPercentPoints: 7,
+            lostPercentPoints: 0,
+            maxPossiblePercent: 100,
+            currentGradePercent: 92,
+            canMeetGoal: true,
+            weekOf: date("2026-02-09"),
+            computedAt: Date()
+        ),
+        .init(
+            courseID: Course.SampleIDs.course2,
+            accumulatedPercentPoints: 9,
+            usedPercentPoints: 9,
+            lostPercentPoints: 0,
+            maxPossiblePercent: 100,
+            currentGradePercent: 90,
+            canMeetGoal: true,
+            weekOf: date("2026-02-23"),
             computedAt: Date()
         )
     ]
