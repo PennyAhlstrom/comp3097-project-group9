@@ -12,7 +12,15 @@ struct Task: Identifiable, Hashable {
     let courseID: UUID
     
     let title: String
-    let type: String // I made this string for now but should be an enum TaskType
+    //let type: String // I made this string for now but should be an enum TaskType
+    enum TaskType: String {
+        case assignment = "ASSIGNMENT"
+        case quiz = "QUIZ"
+        case exam = "EXAM"
+        case project = "PROJECT"
+        case lab = "LAB"
+    }
+    let type: TaskType
     let dueDate: Date?
     
     let isCompleted: Bool
@@ -30,7 +38,8 @@ struct Task: Identifiable, Hashable {
         id: UUID = UUID(),
         courseID: UUID,
         title: String,
-        type: String,
+        type: TaskType,
+        //type: String,
         dueDate: Date?,
         isCompleted: Bool,
         isBonus: Bool,
@@ -60,7 +69,8 @@ extension Task {
         .init(
             courseID: Course.SampleIDs.course1,
             title: "LabEx1",
-            type: "LAB",
+            type: .lab,
+            //type: "LAB",
             dueDate: ymd(2026, 2, 03),
             isCompleted: true,
             isBonus: false,
@@ -71,7 +81,8 @@ extension Task {
         .init(
             courseID: Course.SampleIDs.course1,
             title: "Assignment 1",
-            type: "ASSIGNMENT",
+            type: .assignment,
+            //type: "ASSIGNMENT",
             dueDate: ymd(2026, 2, 23),
             isCompleted: true,
             isBonus: false,
@@ -82,7 +93,8 @@ extension Task {
         .init(
             courseID: Course.SampleIDs.course1,
             title: "Quiz Week 1",
-            type: "QUIZ",
+            type: .quiz,
+            //type: "QUIZ",
             dueDate: ymd(2026, 2, 08),
             isCompleted: false,
             isBonus: false,
@@ -93,7 +105,8 @@ extension Task {
         .init(
             courseID: Course.SampleIDs.course2,
             title: "ML Project Proposal",
-            type: "PROJECT",
+            type: .project,
+            //type: "PROJECT",
             dueDate: ymd(2026, 3, 1),
             isCompleted: false,
             isBonus: false,
@@ -104,7 +117,8 @@ extension Task {
         .init(
             courseID: Course.SampleIDs.course2,
             title: "Quiz 1",
-            type: "QUIZ",
+            type: .quiz,
+            //type: "QUIZ",
             dueDate: ymd(2026, 3, 5),
             isCompleted: false,
             isBonus: false,
@@ -115,7 +129,8 @@ extension Task {
         .init(
             courseID: Course.SampleIDs.course2,
             title: "Assignment 2",
-            type: "ASSIGNMENT",
+            type: .assignment,
+            //type: "ASSIGNMENT",
             dueDate: ymd(2026, 3, 12),
             isCompleted: false,
             isBonus: false,
@@ -126,7 +141,8 @@ extension Task {
         .init(
             courseID: Course.SampleIDs.course3,
             title: "Cyber Sec Lab 1",
-            type: "LAB",
+            type: .lab,
+            //type: "LAB",
             dueDate: ymd(2026, 2, 10),
             isCompleted: true,
             isBonus: false,
@@ -137,7 +153,8 @@ extension Task {
         .init(
             courseID: Course.SampleIDs.course2,
             title: "Midterm Exam",
-            type: "EXAM",
+            type: .exam,
+            //type: "EXAM",
             dueDate: ymd(2026, 3, 5),
             isCompleted: false,
             isBonus: false,
@@ -148,7 +165,8 @@ extension Task {
         .init(
             courseID: Course.SampleIDs.course2,
             title: "Quiz Week 2",
-            type: "QUIZ",
+            type: .quiz,
+            //type: "QUIZ",
             dueDate: ymd(2026, 2, 15),
             isCompleted: true,
             isBonus: false,
@@ -160,7 +178,8 @@ extension Task {
         .init(
             courseID: Course.SampleIDs.course3,
             title: "Security Audit Report",
-            type: "ASSIGNMENT",
+            type: .assignment,
+            //type: "ASSIGNMENT",
             dueDate: ymd(2026, 2, 20),
             isCompleted: true,
             isBonus: false,
@@ -171,7 +190,8 @@ extension Task {
         .init(
             courseID: Course.SampleIDs.course3,
             title: "Bonus: CTF Challenge",
-            type: "LAB",
+            type: .lab,
+            //type: "LAB",
             dueDate: ymd(2026, 3, 1),
             isCompleted: false,
             isBonus: true,
@@ -183,7 +203,8 @@ extension Task {
         .init(
             courseID: Course.SampleIDs.course4,
             title: "React CRUD App",
-            type: "ASSIGNMENT",
+            type: .assignment,
+            //type: "ASSIGNMENT",
             dueDate: ymd(2026, 2, 28),
             isCompleted: true,
             isBonus: false,
@@ -194,7 +215,8 @@ extension Task {
         .init(
             courseID: Course.SampleIDs.course4,
             title: "GraphQL Quiz",
-            type: "QUIZ",
+            type: .quiz,
+            //type: "QUIZ",
             dueDate: ymd(2026, 2, 12),
             isCompleted: true,
             isBonus: false,
@@ -205,7 +227,8 @@ extension Task {
         .init(
             courseID: Course.SampleIDs.course3,
             title: "Midterm Exam",
-            type: "EXAM",
+            type: .exam,
+            //type: "EXAM",
             dueDate: ymd(2026, 3, 1),
             isCompleted: false,
             isBonus: false,
