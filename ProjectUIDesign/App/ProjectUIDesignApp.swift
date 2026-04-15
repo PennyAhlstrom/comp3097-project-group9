@@ -10,13 +10,20 @@ import SwiftUI
 @main
 struct ProjectUIDesignApp: App {
     @StateObject private var store = AppStore()
+    @StateObject private var auth = AuthManager.shared
 
     var body: some Scene {
         WindowGroup {
-            NavigationStack {
-                            HomeView()
-                        }
-                        .environmentObject(store)
+            Group {
+                if auth.isLoggedIn {
+                    NavigationStack {
+                        HomeView()
+                    }
+                } else {
+                    LoginView()
+                }
+            }
+            .environmentObject(store)
         }
     }
 }
