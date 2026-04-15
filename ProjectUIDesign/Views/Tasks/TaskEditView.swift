@@ -15,17 +15,20 @@ struct TaskEditView: View {
 
     @State private var title: String
     @State private var type: String
-    @State private var dueDate: Date = .now
+    @State private var hasDueDate: Bool
+    @State private var dueDate: Date
     @State private var isCompleted: Bool
     @State private var isBonus: Bool
     @State private var isPriority: Bool
     @State private var weightText: String
     @State private var scoreText: String
+    @State private var isSubmitting = false
 
     init(task: Task) {
         self.task = task
         _title = State(initialValue: task.title)
         _type = State(initialValue: task.type)
+        _hasDueDate = State(initialValue: task.dueDate != nil)
         _dueDate = State(initialValue: task.dueDate ?? .now)
         _isCompleted = State(initialValue: task.isCompleted)
         _isBonus = State(initialValue: task.isBonus)
@@ -40,7 +43,12 @@ struct TaskEditView: View {
                 Section("Task") {
                     TextField("Title", text: $title)
                     TextField("Type", text: $type)
-                    DatePicker("Due Date", selection: $dueDate, displayedComponents: .date)
+
+                    Toggle("Has Due Date", isOn: $hasDueDate)
+
+                    if hasDueDate {
+                        DatePicker("Due Date", selection: $dueDate, displayedComponents: .date)
+                    }
                 }
 
                 Section("Flags") {
@@ -52,6 +60,7 @@ struct TaskEditView: View {
                 Section("Grading") {
                     TextField("Weight (%)", text: $weightText)
                         .keyboardType(.decimalPad)
+
                     TextField("Score (%)", text: $scoreText)
                         .keyboardType(.decimalPad)
                 }
@@ -61,24 +70,41 @@ struct TaskEditView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") { dismiss() }
                 }
+
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        let updated = Task(
-                            id: task.id, // preserve ID
-                            courseID: task.courseID,
-                            title: title,
-                            type: type,
-                            dueDate: task.dueDate ?? dueDate,
-                            isCompleted: isCompleted,
-                            isBonus: isBonus,
-                            isPriority: isPriority,
-                            weight: Double(weightText) ?? task.weight,
-                            scorePercent: Double(scoreText) ?? task.scorePercent
-                        )
-                        store.updateTask(updated)
-                        dismiss()
+                    Button(isSubmitting ? "Saving..." : "Save") {
+                        saveTask()
                     }
+                    .disabled(isSubmitting || title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
                 }
+            }
+        }
+    }
+
+    private func saveTask() {
+        let updated = Task(
+            id: task.id,
+            courseID: task.courseID,
+            title: title.trimmingCharacters(in: .whitespacesAndNewlines),
+            type: type.trimmingCharacters(in: .whitespacesAndNewlines),
+            dueDate: hasDueDate ? dueDate : nil,
+            priorityThresholdDays: task.priorityThresholdDays,
+            manualPriorityOverride: task.manualPriorityOverride,
+            weight: Double(weightText) ?? task.weight,
+            scorePercent: Double(scoreText) ?? task.scorePercent,
+            isPriority: isPriority,
+            isCompleted: isCompleted,
+            isBonus: isBonus
+        )
+
+        isSubmitting = true
+
+        Task {
+            await store.updateTask(updated)
+            isSubmitting = false
+
+            if store.errorMessage == nil {
+                dismiss()
             }
         }
     }
