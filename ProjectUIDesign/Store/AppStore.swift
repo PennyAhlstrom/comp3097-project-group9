@@ -11,6 +11,18 @@ import Combine
 @MainActor
 final class AppStore: ObservableObject {
 
+    enum AppMode {
+        case live
+        case demo
+    }
+
+    enum DataSection {
+        case courses
+        case tasks
+        case reminders
+        case progresses
+    }
+
     @Published var courses: [Course] = []
     @Published var tasks: [Task] = []
     @Published var reminders: [Reminder] = []
@@ -19,6 +31,7 @@ final class AppStore: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
     @Published var successMessage: String?
+    @Published var appMode: AppMode = .live
 
     private let courseService = CourseService()
     private let taskService = TaskService()
@@ -42,6 +55,52 @@ final class AppStore: ObservableObject {
         loadCachedTasks()
         loadCachedReminders()
         loadCachedProgresses()
+    }
+
+    // MARK: - Mode
+
+    func enterDemoMode() {
+        appMode = .demo
+        isLoading = false
+        errorMessage = nil
+
+        courses = ClassMateDemoData.courses
+        tasks = ClassMateDemoData.tasks
+        reminders = ClassMateDemoData.reminders
+        progresses = ClassMateDemoData.progresses
+
+        hasLoadedCourses = true
+        hasLoadedTasks = true
+        hasLoadedReminders = true
+        hasLoadedProgresses = true
+
+        Task {
+            await showSuccess("Demo mode enabled")
+        }
+    }
+
+    func switchToLiveMode() {
+        appMode = .live
+        errorMessage = nil
+    }
+
+    func retryLoad(_ section: DataSection) async {
+        switchToLiveMode()
+
+        switch section {
+        case .courses:
+            hasLoadedCourses = false
+            await loadCoursesIfNeeded()
+        case .tasks:
+            hasLoadedTasks = false
+            await loadTasksIfNeeded()
+        case .reminders:
+            hasLoadedReminders = false
+            await loadRemindersIfNeeded()
+        case .progresses:
+            hasLoadedProgresses = false
+            await loadProgressesIfNeeded()
+        }
     }
 
     // MARK: - First Load Guards
@@ -73,6 +132,12 @@ final class AppStore: ObservableObject {
     // MARK: - Load
 
     func loadCourses() async {
+        if appMode == .demo {
+            courses = ClassMateDemoData.courses
+            errorMessage = nil
+            return
+        }
+
         isLoading = true
         defer { isLoading = false }
 
@@ -87,6 +152,12 @@ final class AppStore: ObservableObject {
     }
 
     func loadTasks() async {
+        if appMode == .demo {
+            tasks = ClassMateDemoData.tasks
+            errorMessage = nil
+            return
+        }
+
         isLoading = true
         defer { isLoading = false }
 
@@ -101,6 +172,12 @@ final class AppStore: ObservableObject {
     }
 
     func loadReminders() async {
+        if appMode == .demo {
+            reminders = ClassMateDemoData.reminders
+            errorMessage = nil
+            return
+        }
+
         isLoading = true
         defer { isLoading = false }
 
@@ -115,6 +192,12 @@ final class AppStore: ObservableObject {
     }
 
     func loadProgresses() async {
+        if appMode == .demo {
+            progresses = ClassMateDemoData.progresses
+            errorMessage = nil
+            return
+        }
+
         isLoading = true
         defer { isLoading = false }
 
@@ -131,6 +214,22 @@ final class AppStore: ObservableObject {
     // MARK: - Courses
 
     func addCourse(_ course: Course) async {
+        if appMode == .demo {
+            let localCourse = Course(
+                id: nextCourseID(),
+                code: course.code,
+                title: course.title,
+                instructor: course.instructor,
+                meetings: course.meetings,
+                gradeGoal: course.gradeGoal,
+                startWeek: course.startWeek
+            )
+            courses = [localCourse] + courses
+            errorMessage = nil
+            await showSuccess("Course added in demo mode")
+            return
+        }
+
         let previous = courses
         let optimistic = [course] + courses
         courses = optimistic
@@ -138,7 +237,7 @@ final class AppStore: ObservableObject {
 
         do {
             let created = try await courseService.create(course)
-            if let createdID = created.id,
+            if let created.id,
                let index = courses.firstIndex(where: { $0.id == nil && $0.code == course.code && $0.title == course.title }) {
                 courses[index] = created
             } else {
@@ -156,6 +255,14 @@ final class AppStore: ObservableObject {
 
     func updateCourse(_ updated: Course) async {
         guard let id = updated.id, let idx = courses.firstIndex(where: { $0.id == id }) else { return }
+
+        if appMode == .demo {
+            courses[idx] = updated
+            errorMessage = nil
+            await showSuccess("Course updated in demo mode")
+            return
+        }
+
         let previous = courses
         courses[idx] = updated
         saveCourses()
@@ -176,6 +283,15 @@ final class AppStore: ObservableObject {
     }
 
     func deleteCourse(id: Int) async {
+        if appMode == .demo {
+            courses.removeAll { $0.id == id }
+            tasks.removeAll { $0.courseID == id }
+            progresses.removeAll { $0.courseID == id }
+            errorMessage = nil
+            await showSuccess("Course deleted in demo mode")
+            return
+        }
+
         let previous = courses
         courses.removeAll { $0.id == id }
         saveCourses()
@@ -194,13 +310,34 @@ final class AppStore: ObservableObject {
     // MARK: - Tasks
 
     func addTask(_ task: Task) async {
+        if appMode == .demo {
+            let localTask = Task(
+                id: nextTaskID(),
+                courseID: task.courseID,
+                title: task.title,
+                type: task.type,
+                dueDate: task.dueDate,
+                priorityThresholdDays: task.priorityThresholdDays,
+                manualPriorityOverride: task.manualPriorityOverride,
+                weight: task.weight,
+                scorePercent: task.scorePercent,
+                isPriority: task.isPriority,
+                isCompleted: task.isCompleted,
+                isBonus: task.isBonus
+            )
+            tasks = [localTask] + tasks
+            errorMessage = nil
+            await showSuccess("Task added in demo mode")
+            return
+        }
+
         let previous = tasks
         tasks = [task] + tasks
         saveTasks()
 
         do {
             let created = try await taskService.create(task)
-            if let createdID = created.id,
+            if let created.id,
                let index = tasks.firstIndex(where: { $0.id == nil && $0.title == task.title && $0.courseID == task.courseID }) {
                 tasks[index] = created
             } else {
@@ -218,6 +355,14 @@ final class AppStore: ObservableObject {
 
     func updateTask(_ updated: Task) async {
         guard let id = updated.id, let idx = tasks.firstIndex(where: { $0.id == id }) else { return }
+
+        if appMode == .demo {
+            tasks[idx] = updated
+            errorMessage = nil
+            await showSuccess("Task updated in demo mode")
+            return
+        }
+
         let previous = tasks
         tasks[idx] = updated
         saveTasks()
@@ -238,6 +383,14 @@ final class AppStore: ObservableObject {
     }
 
     func deleteTask(id: Int) async {
+        if appMode == .demo {
+            tasks.removeAll { $0.id == id }
+            reminders.removeAll { $0.taskID == id }
+            errorMessage = nil
+            await showSuccess("Task deleted in demo mode")
+            return
+        }
+
         let previous = tasks
         tasks.removeAll { $0.id == id }
         saveTasks()
@@ -256,13 +409,27 @@ final class AppStore: ObservableObject {
     // MARK: - Reminders
 
     func addReminder(_ reminder: Reminder) async {
+        if appMode == .demo {
+            let localReminder = Reminder(
+                id: nextReminderID(),
+                taskID: reminder.taskID,
+                message: reminder.message,
+                scheduledAt: reminder.scheduledAt,
+                wasSent: reminder.wasSent
+            )
+            reminders = [localReminder] + reminders
+            errorMessage = nil
+            await showSuccess("Reminder added in demo mode")
+            return
+        }
+
         let previous = reminders
         reminders = [reminder] + reminders
         saveReminders()
 
         do {
             let created = try await reminderService.create(reminder)
-            if let createdID = created.id,
+            if let created.id,
                let index = reminders.firstIndex(where: { $0.id == nil && $0.message == reminder.message && $0.taskID == reminder.taskID }) {
                 reminders[index] = created
             } else {
@@ -280,6 +447,14 @@ final class AppStore: ObservableObject {
 
     func updateReminder(_ updated: Reminder) async {
         guard let id = updated.id, let idx = reminders.firstIndex(where: { $0.id == id }) else { return }
+
+        if appMode == .demo {
+            reminders[idx] = updated
+            errorMessage = nil
+            await showSuccess("Reminder updated in demo mode")
+            return
+        }
+
         let previous = reminders
         reminders[idx] = updated
         saveReminders()
@@ -300,6 +475,13 @@ final class AppStore: ObservableObject {
     }
 
     func deleteReminder(id: Int) async {
+        if appMode == .demo {
+            reminders.removeAll { $0.id == id }
+            errorMessage = nil
+            await showSuccess("Reminder deleted in demo mode")
+            return
+        }
+
         let previous = reminders
         reminders.removeAll { $0.id == id }
         saveReminders()
@@ -318,13 +500,32 @@ final class AppStore: ObservableObject {
     // MARK: - Progress
 
     func addProgress(_ progress: Progress) async {
+        if appMode == .demo {
+            let localProgress = Progress(
+                id: nextProgressID(),
+                courseID: progress.courseID,
+                accumulatedPercentPoints: progress.accumulatedPercentPoints,
+                usedPercentPoints: progress.usedPercentPoints,
+                lostPercentPoints: progress.lostPercentPoints,
+                maxPossiblePercent: progress.maxPossiblePercent,
+                currentGradePercent: progress.currentGradePercent,
+                canMeetGoal: progress.canMeetGoal,
+                weekOf: progress.weekOf,
+                computedAt: progress.computedAt
+            )
+            progresses = [localProgress] + progresses
+            errorMessage = nil
+            await showSuccess("Progress added in demo mode")
+            return
+        }
+
         let previous = progresses
         progresses = [progress] + progresses
         saveProgresses()
 
         do {
             let created = try await progressService.create(progress)
-            if let createdID = created.id,
+            if let created.id,
                let index = progresses.firstIndex(where: { $0.id == nil && $0.courseID == progress.courseID && $0.weekOf == progress.weekOf }) {
                 progresses[index] = created
             } else {
@@ -342,6 +543,14 @@ final class AppStore: ObservableObject {
 
     func updateProgress(_ updated: Progress) async {
         guard let id = updated.id, let idx = progresses.firstIndex(where: { $0.id == id }) else { return }
+
+        if appMode == .demo {
+            progresses[idx] = updated
+            errorMessage = nil
+            await showSuccess("Progress updated in demo mode")
+            return
+        }
+
         let previous = progresses
         progresses[idx] = updated
         saveProgresses()
@@ -362,6 +571,13 @@ final class AppStore: ObservableObject {
     }
 
     func deleteProgress(id: Int) async {
+        if appMode == .demo {
+            progresses.removeAll { $0.id == id }
+            errorMessage = nil
+            await showSuccess("Progress deleted in demo mode")
+            return
+        }
+
         let previous = progresses
         progresses.removeAll { $0.id == id }
         saveProgresses()
@@ -390,6 +606,24 @@ final class AppStore: ObservableObject {
                 }
             }
         }
+    }
+
+    // MARK: - ID Helpers
+
+    private func nextCourseID() -> Int {
+        (courses.compactMap(\.id).max() ?? 0) + 1
+    }
+
+    private func nextTaskID() -> Int {
+        (tasks.compactMap(\.id).max() ?? 0) + 1
+    }
+
+    private func nextReminderID() -> Int {
+        (reminders.compactMap(\.id).max() ?? 0) + 1
+    }
+
+    private func nextProgressID() -> Int {
+        (progresses.compactMap(\.id).max() ?? 0) + 1
     }
 
     // MARK: - Cache
