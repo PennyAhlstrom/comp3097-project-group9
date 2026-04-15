@@ -13,71 +13,72 @@ struct TaskListView: View {
     @State private var showingAddTask = false
 
     var body: some View {
-        ListScreen(background: .tasksBackground) {
-                    Section {
-                        ForEach(store.tasks) { task in
+        ZStack {
+            ListScreen(background: .tasksBackground) {
+                Section {
+                    ForEach(store.tasks) { task in
+                        if let taskID = task.id {
                             CardRow {
                                 NavigationLink {
-                                    TaskDetailView(taskID: task.id)
+                                    TaskDetailView(taskID: taskID)
                                 } label: {
                                     HStack(alignment: .top, spacing: 12) {
                                         Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
                                             .font(.title3)
 
                                         VStack(alignment: .leading, spacing: 4) {
-                                            Text(task.title).font(.headline)
-                                            Text("\(task.type) • Due: \(task.dueDate)")
+                                            Text(task.title)
+                                                .font(.headline)
+
+                                            Text("\(task.type) • Due: \(task.dueDate?.formatted(date: .abbreviated, time: .omitted) ?? "No due date")")
                                                 .font(.subheadline)
                                                 .foregroundColor(.secondary)
                                         }
                                     }
+                                    .padding(.vertical, 6)
                                 }
-                                .padding(.vertical, 6)
                             }
                         }
                     }
                 }
-//        List(store.tasks) { task in
-//            NavigationLink {
-//                TaskDetailView(taskID: task.id)
-//            } label: {
-//                HStack(alignment: .top, spacing: 12) {
-//                    Image(systemName: task.isCompleted ? "checkmark.circle.fill" : "circle")
-//                        .font(.title3)
-//
-//                    VStack(alignment: .leading, spacing: 4) {
-//                        Text(task.title).font(.headline)
-//                        Text("\(task.type) • Due: \(task.dueDate)")
-//                            .font(.subheadline)
-//                            .foregroundColor(.secondary)
-//                    }
-//                }
-//                .padding(.vertical, 6)
-//            }
-//        }
-        .navigationTitle("TASKS")
-//        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            showingAddTask = true
-                        } label: {
-                            Label("Add Task", systemImage: "plus")
-                        }
+            }
+            .navigationTitle("TASKS")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        showingAddTask = true
+                    } label: {
+                        Label("Add Task", systemImage: "plus")
                     }
                 }
-                .sheet(isPresented: $showingAddTask) {
-                    TaskAddView()
-                        .environmentObject(store) // pass the same store into the sheet
+            }
+            .sheet(isPresented: $showingAddTask) {
+                TaskAddView()
+                    .environmentObject(store)
+            }
+            .refreshable {
+                await store.loadTasks()
+            }
+            .task {
+                await store.loadTasksIfNeeded()
+            }
+
+            LoadingErrorOverlay(
+                isLoading: store.isLoading,
+                errorMessage: store.errorMessage,
+                onRetry: {
+                    Task {
+                        await store.loadTasks()
+                    }
                 }
+            )
+
+            if let successMessage = store.successMessage {
+                ToastView(message: successMessage)
+            }
+        }
     }
 }
-//
-//#Preview {
-//    NavigationStack {
-//        TaskListView(tasks: Task.sampleTasks)
-//    }
-//}
 
 #Preview {
     NavigationStack {
