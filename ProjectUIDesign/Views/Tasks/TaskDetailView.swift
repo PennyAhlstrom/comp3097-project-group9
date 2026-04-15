@@ -9,7 +9,7 @@ import SwiftUI
 
 struct TaskDetailView: View {
     @EnvironmentObject var store: AppStore
-    let taskID: UUID
+    let taskID: Int
 
     @State private var showEdit = false
     @State private var showDeleteConfirm = false
@@ -23,7 +23,9 @@ struct TaskDetailView: View {
                     Section("Task") {
                         DetailRow(label: "Title", value: task.title)
                         DetailRow(label: "Type", value: task.type)
-                        DetailRow(label: "Due Date", value: task.dueDate?.formatted(.iso8601.year().month().day()) ?? "No due date"
+                        DetailRow(
+                            label: "Due Date",
+                            value: task.dueDate?.formatted(date: .abbreviated, time: .omitted) ?? "No due date"
                         )
                     }
 
@@ -34,8 +36,8 @@ struct TaskDetailView: View {
                     }
 
                     Section("Grading") {
-                        DetailRow(label: "Weight", value: "\(task.weight, default: "%.1f")%")
-                        DetailRow(label: "Score", value: "\(task.scorePercent, default: "%.0f")%")
+                        DetailRow(label: "Weight", value: String(format: "%.1f%%", task.weight))
+                        DetailRow(label: "Score", value: String(format: "%.0f%%", task.scorePercent))
                     }
                 }
                 .navigationTitle("Task")
@@ -51,13 +53,16 @@ struct TaskDetailView: View {
                     Button(role: .destructive) {
                         showDeleteConfirm = true
                     } label: {
-                        Text("Delete Task").frame(maxWidth: .infinity)
+                        Text("Delete Task")
+                            .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.borderedProminent)
                     .padding()
                     .confirmationDialog("Delete this task?", isPresented: $showDeleteConfirm) {
                         Button("Delete", role: .destructive) {
-                            store.deleteTask(id: task.id)
+                            Task {
+                                await store.deleteTask(id: taskID)
+                            }
                         }
                     }
                 }
@@ -70,15 +75,14 @@ struct TaskDetailView: View {
     }
 }
 
-//#Preview {
-//    NavigationStack { TaskDetailView(task: Task.sampleTasks[0]) }
-//}
-
 #Preview {
     let store = AppStore()
     return NavigationStack {
-        TaskDetailView(taskID: store.tasks.first!.id)
+        if let firstTaskID = store.tasks.first?.id {
+            TaskDetailView(taskID: firstTaskID)
+        } else {
+            Text("No task preview data")
+        }
     }
     .environmentObject(store)
 }
-
