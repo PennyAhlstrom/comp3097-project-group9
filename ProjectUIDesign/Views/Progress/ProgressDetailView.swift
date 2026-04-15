@@ -10,86 +10,36 @@ import Charts
 
 struct ProgressDetailView: View {
     @EnvironmentObject var store: AppStore
-    let courseID: UUID
-    
-    @State private var selectedProgressID: UUID?
-    
+    let courseID: Int
+
+    @State private var selectedProgressID: Int?
+
     var body: some View {
-        //            let snapshots = store.progresses
-        //                .filter { $0.courseID == courseID }
-        //                .sorted { $0.weekOf < $1.weekOf } // Chronological order - oldest to newest
-        //
-        //            let selected = snapshots.first(where: { $0.id == selectedProgressID }) ?? snapshots.first
-        
         let snapshots = store.progresses
             .filter { $0.courseID == courseID }
             .sorted { $0.weekOf < $1.weekOf }
-        
+
         let selected = snapshots.first(where: { $0.id == selectedProgressID }) ?? snapshots.last
-        
+
         DetailScreen(background: .progressBackground) {
             Form {
                 Section("Progress") {
                     Picker("Week of:", selection: $selectedProgressID) {
-                        ForEach(snapshots) { p in
-                            Text(p.weekOf.formatted(.dateTime.year().month().day()))
-                                .tag(Optional(p.id))
+                        ForEach(snapshots) { progress in
+                            Text(progress.weekOf.formatted(.dateTime.year().month().day()))
+                                .tag(Optional(progress.id))
                         }
                     }
                     .pickerStyle(.menu)
                 }
-                
+
                 Section("History") {
                     ProgressChartView(
                         snapshots: snapshots,
                         selectedProgressID: selectedProgressID
                     )
                 }
-                //                    Chart(historyData, id: \.week) { item in
-                //                        if let current = item.current {
-                //                            BarMark(
-                //                                x: .value("Week", item.week),
-                //                                y: .value("Percent", current)
-                //                            )
-                //                            .position(by: .value("Type", "Current"))
-                //                            .foregroundStyle(Color.progressCurrentBar)
-                //                        }
-                //
-                //                        if let possible = item.possible {
-                //                            BarMark(
-                //                                x: .value("Week", item.week),
-                //                                y: .value("Percent", possible)
-                //                            )
-                //                            .position(by: .value("Type", "Possible"))
-                //                            .foregroundStyle(Color.progressPossibleBar)
-                //                        }
-                //                    }
-                //                    .frame(height: 220)
-                //                    .chartTitle("Weekly Progress (%)")
-                //                    .chartYScale(domain: 0...100)
-                //
-                //                    .chartXAxisLabel(position: .bottom, alignment: .center) {
-                //                        Text("Week")
-                //                    }
-                //
-                //                    .chartXAxis {
-                //                        AxisMarks(values: historyData.map { $0.week }) { value in
-                //                            AxisValueLabel {
-                //                                if let week = value.as(String.self) {
-                //                                    Text(week.replacingOccurrences(of: "Wk", with: ""))
-                //                                }
-                //                            }
-                //                        }
-                //                    }
-                //
-                //                    .chartYAxis {
-                //                        AxisMarks(position: .leading, values: [0, 20, 40, 60, 80, 100]) { value in
-                //                            AxisGridLine()
-                //                            AxisTick()
-                //                            AxisValueLabel()
-                //                        }
-                //                    }
-                
+
                 if let progress = selected {
                     List {
                         Section("Status") {
@@ -97,18 +47,15 @@ struct ProgressDetailView: View {
                             DetailRow(label: "Max Possible", value: progress.maxPossiblePercent.percent)
                             DetailRow(label: "Can Meet Goal", value: progress.canMeetGoal ? "Yes" : "No")
                         }
-                        
+
                         Section("Percent Points") {
-                            // used DoubleFormat for number formatting
-                            DetailRow(label: "Accumulated",  value: progress.accumulatedPercentPoints.whole)
+                            DetailRow(label: "Accumulated", value: progress.accumulatedPercentPoints.whole)
                             DetailRow(label: "Lost", value: progress.lostPercentPoints.whole)
                             DetailRow(label: "Used", value: progress.usedPercentPoints.whole)
                         }
-                        
                     }
                     .navigationTitle("Progress")
                     .navigationBarTitleDisplayMode(.inline)
-                    
                 } else {
                     Text("Progress not found.")
                         .foregroundColor(.secondary)
@@ -117,19 +64,19 @@ struct ProgressDetailView: View {
         }
         .navigationTitle("Progress")
         .onAppear {
-            selectedProgressID = snapshots.last?.id // default to latest
+            selectedProgressID = snapshots.last?.id
         }
     }
 }
 
-//#Preview {
-//    NavigationStack { ProgressDetailView(progress: Progress.sampleProgresses[0]) }
-//}
-
 #Preview {
     let store = AppStore()
     NavigationStack {
-        ProgressDetailView(courseID: Course.SampleIDs.course1)
+        if let firstCourseID = store.courses.first?.id {
+            ProgressDetailView(courseID: firstCourseID)
+        } else {
+            Text("No progress preview data")
+        }
     }
     .environmentObject(store)
 }
