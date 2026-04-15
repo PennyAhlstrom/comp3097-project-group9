@@ -11,15 +11,17 @@ struct ProgressListView: View {
     @EnvironmentObject var store: AppStore
 
     var body: some View {
-        ListScreen(background: .progressBackground) {
-                    Section {
-                        ForEach(store.courses) { course in
+        ZStack {
+            ListScreen(background: .progressBackground) {
+                Section {
+                    ForEach(store.courses) { course in
+                        if let courseID = course.id {
                             CardRow {
-                                let latest = latestProgress(for: course.id)
-                                
+                                let latest = latestProgress(for: courseID)
+
                                 if latest != nil {
                                     NavigationLink {
-                                        ProgressDetailView(courseID: course.id)
+                                        ProgressDetailView(courseID: courseID)
                                     } label: {
                                         courseRow(course: course, progress: latest)
                                     }
@@ -28,31 +30,35 @@ struct ProgressListView: View {
                                 }
                             }
                         }
-                                .navigationTitle("PROGRESS")
                     }
+                    .navigationTitle("PROGRESS")
                 }
             }
-//        List(store.courses) { course in
-//            let latest = latestProgress(for: course.id)
-//            
-//            if latest != nil {
-//                NavigationLink {
-//                    ProgressDetailView(courseID: course.id)
-//                } label: {
-//                    courseRow(course: course, progress: latest)
-//                }
-//            } else {
-//                courseRow(course: course, progress: nil)
-//            }
-//        }
-//        .navigationTitle("Progress")
-//        .navigationBarTitleDisplayMode(.inline)
-//    }
+            .refreshable {
+                await store.loadProgresses()
+            }
+            .task {
+                await store.loadProgressesIfNeeded()
+            }
 
-    // MARK: - Course Row UI
+            LoadingErrorOverlay(
+                isLoading: store.isLoading,
+                errorMessage: store.errorMessage,
+                onRetry: {
+                    Task {
+                        await store.loadProgresses()
+                    }
+                }
+            )
+
+            if let successMessage = store.successMessage {
+                ToastView(message: successMessage)
+            }
+        }
+    }
+
     private func courseRow(course: Course, progress: Progress?) -> some View {
         VStack(alignment: .leading, spacing: 6) {
-
             Text(course.code)
                 .font(.headline)
 
@@ -60,58 +66,46 @@ struct ProgressListView: View {
                 .font(.subheadline)
                 .foregroundColor(.secondary)
 
-            if let p = progress {
-
+            if let progress {
                 HStack(spacing: 12) {
-                    Text("Accumulated: \n\(p.accumulatedPercentPoints.whole)")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading) // Make each element expand equally and be left aligned
-                        .fontWeight(.semibold)
-
-                    Text("Current: \n\(p.currentGradePercent.percent)")
+                    Text("Accumulated: \n\(progress.accumulatedPercentPoints.whole)")
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .fontWeight(.semibold)
 
-                         Text("Possible: \n\(p.maxPossiblePercent.percent)")
+                    Text("Current: \n\(progress.currentGradePercent.percent)")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .fontWeight(.semibold)
+
+                    Text("Possible: \n\(progress.maxPossiblePercent.percent)")
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .fontWeight(.semibold)
                 }
 
-                Text(p.canMeetGoal ? "On track to meet goal"
-                                   : "At risk of missing goal")
+                Text(progress.canMeetGoal ? "On track to meet goal" : "At risk of missing goal")
                     .font(.subheadline)
-                    .foregroundColor(p.canMeetGoal ? .secondary : .red)
-
+                    .foregroundColor(progress.canMeetGoal ? .secondary : .red)
             } else {
                 Text("No progress calculated yet")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
-                
             }
         }
         .padding(.vertical, 6)
     }
 
-    // MARK: - Find Latest Progress
-    private func latestProgress(for courseID: UUID) -> Progress? {
+    private func latestProgress(for courseID: Int) -> Progress? {
         store.progresses
             .filter { $0.courseID == courseID }
-            .sorted { $0.weekOf > $1.weekOf }   // using weekOf to determine lastest progress
+            .sorted { $0.weekOf > $1.weekOf }
             .first
     }
 }
-
-
-//#Preview {
-//    NavigationStack {
-//        ProgressListView(progresses: Progress.sampleProgresses)
-//    }
-//}
 
 #Preview {
     NavigationStack {
@@ -119,4 +113,3 @@ struct ProgressListView: View {
     }
     .environmentObject(AppStore())
 }
-
