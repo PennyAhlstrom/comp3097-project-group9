@@ -7,21 +7,29 @@
 
 import Foundation
 
-struct Course: Identifiable, Hashable {
-    let id: UUID
+struct CourseMeeting: Codable, Hashable, Identifiable {
+    var id: String { "\(dayOfWeek)-\(startTime)-\(endTime)" }
+
+    let dayOfWeek: Int
+    let startTime: String
+    let endTime: String
+}
+
+struct Course: Identifiable, Codable, Hashable {
+    let id: Int?
     let code: String
     let title: String
     let instructor: String
-    //let schedule: List<ScheduleItem>
+    let meetings: [CourseMeeting]
     let gradeGoal: Int?
     let startWeek: Date?
-    //let tasks: List<Task>?
 
     init(
-        id: UUID = UUID(),
+        id: Int? = nil,
         code: String,
         title: String,
         instructor: String,
+        meetings: [CourseMeeting] = [],
         gradeGoal: Int?,
         startWeek: Date?
     ) {
@@ -29,67 +37,18 @@ struct Course: Identifiable, Hashable {
         self.code = code
         self.title = title
         self.instructor = instructor
+        self.meetings = meetings
         self.gradeGoal = gradeGoal
         self.startWeek = startWeek
     }
-}
 
-extension Course {
-    enum SampleIDs {
-            static let course1 = UUID(uuidString: "11111111-1111-1111-1111-111111111111")!
-            static let course2 = UUID(uuidString: "22222222-2222-2222-2222-222222222222")!
-            static let course3 = UUID(uuidString: "33333333-3333-3333-3333-333333333333")!
-            static let course4 = UUID(uuidString: "44444444-4444-4444-4444-444444444444")!
-        }
-    
-    static let sampleCourses: [Course] = [
-        .init(
-            id: SampleIDs.course1,
-            code: "COMP3097",
-            title: "Mobile Dev II",
-            instructor: "Professor Kiani",
-            gradeGoal: 85,
-            startWeek: Date()
-        ),
-        .init(
-            id: SampleIDs.course2,
-            code: "COMP3132",
-            title: "Machine Learning",
-            instructor: "Professor Ajellu",
-            gradeGoal: 85,
-            startWeek: Date()
-        ),
-        .init(
-            id: SampleIDs.course3,
-            code: "COMP3134",
-            title: "Cyber Security",
-            instructor: "Professor Blanc",
-            gradeGoal: 85,
-            startWeek: Date()
-        ),
-        .init(
-            id: SampleIDs.course4,
-            code: "COMP3133",
-            title: "Fullstack Dev II",
-            instructor: "Professor Patel",
-            gradeGoal: 85,
-            startWeek: Date()
-        ),
-        .init(
-            id: UUID(),
-            code: "COMM2000",
-            title: "Communicating Across Contexts",
-            instructor: "Professor Karimian",
-            gradeGoal: 93,
-            startWeek: Date()
-        ),
-        .init(
-            id: UUID(),
-            code: "COMP1151",
-            title: "IT Essentials",
-            instructor: "Professor Danison",
-            gradeGoal: 95,
-            startWeek: Date()
-        )
-    ]
+    enum CodingKeys: String, CodingKey {
+        case id = "courseId"
+        case code
+        case title
+        case instructor
+        case meetings
+        case gradeGoal
+        case startWeek
+    }
 }
