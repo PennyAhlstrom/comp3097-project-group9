@@ -16,6 +16,7 @@ struct CourseAddView: View {
     @State private var instructor = ""
     @State private var gradeGoalText = ""
     @State private var startWeek = Date()
+    @State private var isSubmitting = false
 
     var body: some View {
         NavigationStack {
@@ -38,20 +39,33 @@ struct CourseAddView: View {
                     Button("Cancel") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Add") {
-                        let goal = Int(gradeGoalText)
-                        let newCourse = Course(
-                            code: code,
-                            title: title,
-                            instructor: instructor,
-                            gradeGoal: goal,
-                            startWeek: startWeek
-                        )
-                        store.courses.append(newCourse)
-                        dismiss()
+                    Button(isSubmitting ? "Adding..." : "Add") {
+                        addCourse()
                     }
-                    .disabled(code.isEmpty || title.isEmpty || instructor.isEmpty)
+                    .disabled(isSubmitting || code.isEmpty || title.isEmpty || instructor.isEmpty)
                 }
+            }
+        }
+    }
+
+    private func addCourse() {
+        let goal = Int(gradeGoalText)
+        let newCourse = Course(
+            code: code,
+            title: title,
+            instructor: instructor,
+            meetings: [],
+            gradeGoal: goal,
+            startWeek: startWeek
+        )
+
+        isSubmitting = true
+
+        Task {
+            await store.addCourse(newCourse)
+            isSubmitting = false
+            if store.errorMessage == nil {
+                dismiss()
             }
         }
     }
