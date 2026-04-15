@@ -8,8 +8,7 @@
 import Foundation
 
 enum APIConfig {
-    // TODO: Replace with deployed Render URL
-    static let baseURL = "http://localhost:8091"
+    static let baseURL = "https://classmate3000-api-gateway.onrender.com"
 
     static var apiDateFormatter: ISO8601DateFormatter = {
         let formatter = ISO8601DateFormatter()
