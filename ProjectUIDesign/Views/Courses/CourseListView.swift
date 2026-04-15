@@ -66,8 +66,11 @@ struct CourseListView: View {
                 errorMessage: store.errorMessage,
                 onRetry: {
                     Task {
-                        await store.loadCourses()
+                        await store.retryLoad(.courses)
                     }
+                },
+                onDemoMode: {
+                    store.enterDemoMode()
                 }
             )
 

@@ -46,8 +46,11 @@ struct ProgressListView: View {
                 errorMessage: store.errorMessage,
                 onRetry: {
                     Task {
-                        await store.loadProgresses()
+                        await store.retryLoad(.progresses)
                     }
+                },
+                onDemoMode: {
+                    store.enterDemoMode()
                 }
             )
 

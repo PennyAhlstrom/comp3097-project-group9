@@ -62,8 +62,11 @@ struct ReminderListView: View {
                 errorMessage: store.errorMessage,
                 onRetry: {
                     Task {
-                        await store.loadReminders()
+                        await store.retryLoad(.reminders)
                     }
+                },
+                onDemoMode: {
+                    store.enterDemoMode()
                 }
             )
 

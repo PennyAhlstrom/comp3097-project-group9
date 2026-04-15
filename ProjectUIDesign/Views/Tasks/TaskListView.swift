@@ -5,7 +5,6 @@
 //  Created by Penny Ahlstrom on 2026-03-03.
 //
 
-
 import SwiftUI
 
 struct TaskListView: View {
@@ -68,8 +67,11 @@ struct TaskListView: View {
                 errorMessage: store.errorMessage,
                 onRetry: {
                     Task {
-                        await store.loadTasks()
+                        await store.retryLoad(.tasks)
                     }
+                },
+                onDemoMode: {
+                    store.enterDemoMode()
                 }
             )
 
