@@ -11,24 +11,43 @@ struct TaskAddView: View {
     @EnvironmentObject var store: AppStore
     @Environment(\.dismiss) var dismiss
 
-    @State private var courseID = Course.sampleCourses.first!.id
+    @State private var selectedCourseID: Int?
     @State private var title = ""
     @State private var type = "LAB"
-    @State var hasDueDate = false
+    @State private var hasDueDate = true
     @State private var dueDate = Date.now
     @State private var isCompleted = false
     @State private var isBonus = false
     @State private var isPriority = false
     @State private var weight: Double = 0
     @State private var score: Double = 0
+    @State private var isSubmitting = false
 
     var body: some View {
         NavigationStack {
             FormScreen(background: .tasksBackground) {
+                Section("Course") {
+                    Picker("Course", selection: $selectedCourseID) {
+                        Text("Select Course").tag(Optional<Int>.none)
+
+                        ForEach(store.courses) { course in
+                            if let id = course.id {
+                                Text("\(course.code) — \(course.title)")
+                                    .tag(Optional(id))
+                            }
+                        }
+                    }
+                }
+
                 Section("Task") {
                     TextField("Title", text: $title)
                     TextField("Type (e.g., LAB)", text: $type)
-                    DatePicker("Due Date", selection: $dueDate, displayedComponents: .date)
+
+                    Toggle("Has Due Date", isOn: $hasDueDate)
+
+                    if hasDueDate {
+                        DatePicker("Due Date", selection: $dueDate, displayedComponents: .date)
+                    }
                 }
 
                 Section("Flags") {
@@ -49,23 +68,45 @@ struct TaskAddView: View {
                 }
 
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Add") {
-                        let newTask = Task(
-                            courseID: courseID,
-                            title: title,
-                            type: type,
-                            dueDate: hasDueDate ? dueDate : nil, // dueDate is optional
-                            isCompleted: isCompleted,
-                            isBonus: isBonus,
-                            isPriority: isPriority,
-                            weight: weight,
-                            scorePercent: score
-                        )
-                        store.tasks.append(newTask)
-                        dismiss()
+                    Button(isSubmitting ? "Adding..." : "Add") {
+                        addTask()
                     }
-                    .disabled(title.isEmpty)
+                    .disabled(isSubmitting || title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || selectedCourseID == nil)
                 }
+            }
+            .task {
+                if selectedCourseID == nil {
+                    selectedCourseID = store.courses.compactMap(\.id).first
+                }
+            }
+        }
+    }
+
+    private func addTask() {
+        guard let selectedCourseID else { return }
+
+        let newTask = Task(
+            courseID: selectedCourseID,
+            title: title.trimmingCharacters(in: .whitespacesAndNewlines),
+            type: type.trimmingCharacters(in: .whitespacesAndNewlines),
+            dueDate: hasDueDate ? dueDate : nil,
+            priorityThresholdDays: nil,
+            manualPriorityOverride: nil,
+            weight: weight,
+            scorePercent: score,
+            isPriority: isPriority,
+            isCompleted: isCompleted,
+            isBonus: isBonus
+        )
+
+        isSubmitting = true
+
+        _Concurrency.Task {
+            await store.addTask(newTask)
+            isSubmitting = false
+
+            if store.errorMessage == nil {
+                dismiss()
             }
         }
     }

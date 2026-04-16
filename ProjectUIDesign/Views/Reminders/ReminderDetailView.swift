@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ReminderDetailView: View {
     @EnvironmentObject var store: AppStore
-    let reminderID: UUID
+    let reminderID: Int
 
     @State private var showEdit = false
     @State private var showDeleteConfirm = false
@@ -22,7 +22,11 @@ struct ReminderDetailView: View {
                 List {
                     Section("Reminder") {
                         DetailRow(label: "Message", value: reminder.message)
-                        DetailRow(label: "Scheduled At", value: reminder.scheduledAt)
+                        DetailRow(
+                            label: "Scheduled At",
+                            value: reminder.scheduledAt.formatted(date: .abbreviated, time: .shortened)
+                        )
+                        DetailRow(label: "Was Sent", value: reminder.wasSent ? "Yes" : "No")
                     }
                 }
                 .navigationTitle("Reminder")
@@ -38,13 +42,16 @@ struct ReminderDetailView: View {
                     Button(role: .destructive) {
                         showDeleteConfirm = true
                     } label: {
-                        Text("Delete Reminder").frame(maxWidth: .infinity)
+                        Text("Delete Reminder")
+                            .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.borderedProminent)
                     .padding()
                     .confirmationDialog("Delete this reminder?", isPresented: $showDeleteConfirm) {
                         Button("Delete", role: .destructive) {
-                            store.deleteReminder(id: reminder.id)
+                            _Concurrency.Task {
+                                await store.deleteReminder(id: reminderID)
+                            }
                         }
                     }
                 }
@@ -56,14 +63,15 @@ struct ReminderDetailView: View {
         }
     }
 }
-//#Preview {
-//    NavigationStack { ReminderDetailView(reminder: Reminder.sampleReminders[0]) }
-//}
 
 #Preview {
     let store = AppStore()
     return NavigationStack {
-        ReminderDetailView(reminderID: store.reminders.first!.id)
+        if let firstReminderID = store.reminders.first?.id {
+            ReminderDetailView(reminderID: firstReminderID)
+        } else {
+            Text("No reminder preview data")
+        }
     }
     .environmentObject(store)
 }

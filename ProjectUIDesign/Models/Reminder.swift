@@ -7,56 +7,32 @@
 
 import Foundation
 
-struct Reminder: Identifiable, Hashable {
-    let id: UUID
+struct Reminder: Identifiable, Codable, Hashable {
+    let id: Int?
+    let taskID: Int
     let message: String
-    let scheduledAt: String // String for now, should be LocalDateTime
-    //let wasSent: Bool
+    let scheduledAt: Date
+    let wasSent: Bool
 
-    init(id: UUID = UUID(), message: String, scheduledAt: String) {
+    init(
+        id: Int? = nil,
+        taskID: Int,
+        message: String,
+        scheduledAt: Date,
+        wasSent: Bool = false
+    ) {
         self.id = id
+        self.taskID = taskID
         self.message = message
         self.scheduledAt = scheduledAt
+        self.wasSent = wasSent
     }
-}
 
-extension Reminder {
-    static let sampleReminders: [Reminder] = [
-        .init(
-            message: "Complete Quiz 1",
-            scheduledAt: "2026-03-06"
-        ),
-        .init(
-            message: "Study for Midterm",
-            scheduledAt: "2026-02-08"
-        ),
-        .init(
-            message: "Submit Lab 3",
-            scheduledAt: "2026-03-12"
-        ),
-        .init(
-            message: "Midterm Exam",
-            scheduledAt: "2026-02-18"
-        ),
-        .init(
-            message: "ML Midterm prep - review notes",
-            scheduledAt: "2026-03-03"
-        ),
-        .init(
-            message: "Push React CRUD to GitHub",
-            scheduledAt: "2026-02-27"
-        ),
-        .init(
-            message: "Start Project Proposal",
-            scheduledAt: "2026-03-01"
-        ),
-        .init(
-            message: "Submit Final Project",
-            scheduledAt: "2026-04-10"
-        ),
-        .init(
-            message: "Attend Review Session",
-            scheduledAt: "2026-03-15"
-        )
-    ]
+    enum CodingKeys: String, CodingKey {
+        case id = "reminderId"
+        case taskID = "taskId"
+        case message
+        case scheduledAt
+        case wasSent
+    }
 }

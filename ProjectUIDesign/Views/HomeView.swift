@@ -78,7 +78,24 @@ struct HomeView: View {
                 }
             //}
             .navigationTitle("HOME")
+//            .toolbar {
+//                ToolbarItem(placement: .topBarTrailing) {
+//                    Button("Logout") {
+//                        AuthManager.shared.logout()
+//                    }
+//                }
+//            }
+            
+            Section {
+                Button(role: .destructive) {
+                    AuthManager.shared.logout()
+                } label: {
+                    Text("Logout")
+                        .frame(maxWidth: .infinity)
+                }
+            }
         }
+        
     }
 }
 

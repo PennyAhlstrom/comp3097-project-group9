@@ -18,6 +18,7 @@ struct CourseEditView: View {
     @State private var instructor: String
     @State private var gradeGoalText: String
     @State private var startWeek: Date
+    @State private var isSubmitting = false
 
     init(course: Course) {
         self.course = course
@@ -49,22 +50,34 @@ struct CourseEditView: View {
                     Button("Cancel") { dismiss() }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        let goal = Int(gradeGoalText)
-                        let updated = Course(
-                            id: course.id,
-                            code: code,
-                            title: title,
-                            instructor: instructor,
-                            gradeGoal: goal,
-                            startWeek: startWeek
-                        )
-
-                        // Preserve the same ID for update
-                        store.updateCourse(updated) // will only work after model change
-                        dismiss()
+                    Button(isSubmitting ? "Saving..." : "Save") {
+                        saveCourse()
                     }
+                    .disabled(isSubmitting || code.isEmpty || title.isEmpty || instructor.isEmpty)
                 }
+            }
+        }
+    }
+
+    private func saveCourse() {
+        let goal = Int(gradeGoalText)
+        let updated = Course(
+            id: course.id,
+            code: code,
+            title: title,
+            instructor: instructor,
+            meetings: course.meetings,
+            gradeGoal: goal,
+            startWeek: startWeek
+        )
+
+        isSubmitting = true
+
+        _Concurrency.Task {
+            await store.updateCourse(updated)
+            isSubmitting = false
+            if store.errorMessage == nil {
+                dismiss()
             }
         }
     }

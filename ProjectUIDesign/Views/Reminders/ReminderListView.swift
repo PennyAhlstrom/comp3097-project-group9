@@ -10,66 +10,72 @@ import SwiftUI
 struct ReminderListView: View {
     @EnvironmentObject var store: AppStore
     @State private var showingAddReminder = false
-    
 
     var body: some View {
-        ListScreen(background: .remindersBackground) {
-            Section {
-                ForEach(store.reminders, id: \.id) { reminder in
-                    CardRow {
-                        NavigationLink {
-                            ReminderDetailView(reminderID: reminder.id)
-                        } label: {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(reminder.message)
-                                    .font(.headline)
-                                
-                                Text("Date: \(reminder.scheduledAt)")
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
+        ZStack {
+            ListScreen(background: .remindersBackground) {
+                Section {
+                    ForEach(store.reminders) { reminder in
+                        if let reminderID = reminder.id {
+                            CardRow {
+                                NavigationLink {
+                                    ReminderDetailView(reminderID: reminderID)
+                                } label: {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(reminder.message)
+                                            .font(.headline)
+
+                                        Text("Date: \(reminder.scheduledAt.formatted(date: .abbreviated, time: .shortened))")
+                                            .font(.subheadline)
+                                            .foregroundColor(.secondary)
+                                    }
+                                    .padding(.vertical, 6)
+                                }
                             }
-                            .padding(.vertical, 6)
                         }
                     }
                 }
             }
-        }
-//        List(store.reminders) { reminder in
-//            NavigationLink {
-//                ReminderDetailView(reminderID: reminder.id)
-//            } label: {
-//                VStack(alignment: .leading, spacing: 4) {
-//                    Text(reminder.message).font(.headline)
-//                    Text("Scheduled: \(reminder.scheduledAt)")
-//                        .font(.subheadline)
-//                        .foregroundColor(.secondary)
-//                }
-//                .padding(.vertical, 6)
-//            }
-//        }
-        .navigationTitle("REMINDERS")
-//        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            showingAddReminder = true
-                        } label: {
-                            Label("Add Reminder", systemImage: "plus")
-                        }
+            .navigationTitle("REMINDERS")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        showingAddReminder = true
+                    } label: {
+                        Label("Add Reminder", systemImage: "plus")
                     }
                 }
-                .sheet(isPresented: $showingAddReminder) {
-                    ReminderAddView()
-                        .environmentObject(store) // pass the same store into the sheet
+            }
+            .sheet(isPresented: $showingAddReminder) {
+                ReminderAddView()
+                    .environmentObject(store)
+            }
+            .refreshable {
+                await store.loadReminders()
+            }
+            .task {
+                await store.loadRemindersIfNeeded()
+            }
+
+            LoadingErrorOverlay(
+                isLoading: store.isLoading,
+                errorMessage: store.errorMessage,
+                onRetry: {
+                    _Concurrency.Task {
+                        await store.retryLoad(.reminders)
+                    }
+                },
+                onDemoMode: {
+                    store.enterDemoMode()
                 }
+            )
+
+            if let successMessage = store.successMessage {
+                ToastView(message: successMessage)
+            }
+        }
     }
 }
-//
-//#Preview {
-//    NavigationStack {
-//        ReminderListView(reminders: Reminder.sampleReminders)
-//    }
-//}
 
 #Preview {
     NavigationStack {
@@ -77,5 +83,3 @@ struct ReminderListView: View {
     }
     .environmentObject(AppStore())
 }
-
-
