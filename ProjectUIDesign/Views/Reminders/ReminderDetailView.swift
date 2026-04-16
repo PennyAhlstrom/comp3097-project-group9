@@ -49,7 +49,7 @@ struct ReminderDetailView: View {
                     .padding()
                     .confirmationDialog("Delete this reminder?", isPresented: $showDeleteConfirm) {
                         Button("Delete", role: .destructive) {
-                            Task {
+                            _Concurrency.Task {
                                 await store.deleteReminder(id: reminderID)
                             }
                         }

@@ -101,7 +101,7 @@ struct TaskAddView: View {
 
         isSubmitting = true
 
-        Task {
+        _Concurrency.Task {
             await store.addTask(newTask)
             isSubmitting = false
 

@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct LoginView: View {
+    @StateObject private var auth = AuthManager.shared
+    @EnvironmentObject var store: AppStore
     @State private var email = ""
     @State private var password = ""
     @State private var isSubmitting = false
@@ -53,6 +55,15 @@ struct LoginView: View {
                         RegisterView()
                     }
                 }
+                
+                Section {
+                    Button {
+                        store.enterDemoMode()
+                    } label: {
+                        Text("Continue in Demo Mode")
+                            .frame(maxWidth: .infinity)
+                    }
+                }
             }
             .navigationTitle("Login")
         }
@@ -62,7 +73,7 @@ struct LoginView: View {
         errorMessage = nil
         isSubmitting = true
 
-        Task {
+        _Concurrency.Task {
             defer { isSubmitting = false }
 
             do {

@@ -7,6 +7,8 @@
 
 import Foundation
 
+struct EmptyBody: Encodable {}
+
 final class NetworkManager {
     static let shared = NetworkManager()
 
@@ -80,7 +82,7 @@ final class NetworkManager {
         method: String,
         requiresAuth: Bool
     ) async throws -> Response {
-        struct EmptyBody: Encodable {}
+    
         return try await send(path: path, method: method, body: Optional<EmptyBody>.none, requiresAuth: requiresAuth)
     }
 
@@ -124,7 +126,6 @@ final class NetworkManager {
         method: String,
         requiresAuth: Bool
     ) async throws {
-        struct EmptyBody: Encodable {}
         try await sendNoContent(path: path, method: method, body: Optional<EmptyBody>.none, requiresAuth: requiresAuth)
     }
 
@@ -137,7 +138,7 @@ final class NetworkManager {
         case 200...299:
             return
         case 401:
-            Task { @MainActor in
+            _Concurrency.Task { @MainActor in
                 AuthManager.shared.logout()
             }
             throw APIError.unauthorized

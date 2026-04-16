@@ -99,7 +99,7 @@ struct TaskEditView: View {
 
         isSubmitting = true
 
-        Task {
+        _Concurrency.Task {
             await store.updateTask(updated)
             isSubmitting = false
 

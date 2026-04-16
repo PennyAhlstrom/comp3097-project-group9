@@ -61,7 +61,7 @@ struct ReminderEditView: View {
 
         isSubmitting = true
 
-        Task {
+        _Concurrency.Task {
             await store.updateReminder(updated)
             isSubmitting = false
 

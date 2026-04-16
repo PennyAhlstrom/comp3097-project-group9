@@ -55,33 +55,44 @@ final class AppStore: ObservableObject {
         loadCachedTasks()
         loadCachedReminders()
         loadCachedProgresses()
+        syncSessionMode()
     }
 
     // MARK: - Mode
 
+    func syncSessionMode() {
+        if AuthManager.shared.isDemoMode {
+            appMode = .demo
+            isLoading = false
+            errorMessage = nil
+
+            courses = ClassMateDemoData.courses
+            tasks = ClassMateDemoData.tasks
+            reminders = ClassMateDemoData.reminders
+            progresses = ClassMateDemoData.progresses
+
+            hasLoadedCourses = true
+            hasLoadedTasks = true
+            hasLoadedReminders = true
+            hasLoadedProgresses = true
+        } else {
+            appMode = .live
+            errorMessage = nil
+        }
+    }
+
     func enterDemoMode() {
-        appMode = .demo
-        isLoading = false
-        errorMessage = nil
+        AuthManager.shared.enterDemoMode()
+        syncSessionMode()
 
-        courses = ClassMateDemoData.courses
-        tasks = ClassMateDemoData.tasks
-        reminders = ClassMateDemoData.reminders
-        progresses = ClassMateDemoData.progresses
-
-        hasLoadedCourses = true
-        hasLoadedTasks = true
-        hasLoadedReminders = true
-        hasLoadedProgresses = true
-
-        Task {
+        _Concurrency.Task {
             await showSuccess("Demo mode enabled")
         }
     }
 
     func switchToLiveMode() {
-        appMode = .live
-        errorMessage = nil
+        AuthManager.shared.exitDemoMode()
+        syncSessionMode()
     }
 
     func retryLoad(_ section: DataSection) async {
@@ -237,7 +248,7 @@ final class AppStore: ObservableObject {
 
         do {
             let created = try await courseService.create(course)
-            if let created.id,
+            if let _ = created.id,
                let index = courses.firstIndex(where: { $0.id == nil && $0.code == course.code && $0.title == course.title }) {
                 courses[index] = created
             } else {
@@ -337,7 +348,7 @@ final class AppStore: ObservableObject {
 
         do {
             let created = try await taskService.create(task)
-            if let created.id,
+            if let _ = created.id,
                let index = tasks.firstIndex(where: { $0.id == nil && $0.title == task.title && $0.courseID == task.courseID }) {
                 tasks[index] = created
             } else {
@@ -429,7 +440,7 @@ final class AppStore: ObservableObject {
 
         do {
             let created = try await reminderService.create(reminder)
-            if let created.id,
+            if let _ = created.id,
                let index = reminders.firstIndex(where: { $0.id == nil && $0.message == reminder.message && $0.taskID == reminder.taskID }) {
                 reminders[index] = created
             } else {
@@ -525,7 +536,7 @@ final class AppStore: ObservableObject {
 
         do {
             let created = try await progressService.create(progress)
-            if let created.id,
+            if let _ = created.id,
                let index = progresses.firstIndex(where: { $0.id == nil && $0.courseID == progress.courseID && $0.weekOf == progress.weekOf }) {
                 progresses[index] = created
             } else {
@@ -598,8 +609,8 @@ final class AppStore: ObservableObject {
     func showSuccess(_ message: String) async {
         successMessage = message
 
-        Task {
-            try? await Task.sleep(nanoseconds: 2_000_000_000)
+        _Concurrency.Task {
+            try? await _Concurrency.Task .sleep(nanoseconds: 2_000_000_000)
             await MainActor.run {
                 if self.successMessage == message {
                     self.successMessage = nil
@@ -611,19 +622,19 @@ final class AppStore: ObservableObject {
     // MARK: - ID Helpers
 
     private func nextCourseID() -> Int {
-        (courses.compactMap(\.id).max() ?? 0) + 1
+        (courses.compactMap { $0.id }.max() ?? 0) + 1
     }
 
     private func nextTaskID() -> Int {
-        (tasks.compactMap(\.id).max() ?? 0) + 1
+        (tasks.compactMap { $0.id }.max() ?? 0) + 1
     }
 
     private func nextReminderID() -> Int {
-        (reminders.compactMap(\.id).max() ?? 0) + 1
+        (reminders.compactMap { $0.id }.max() ?? 0) + 1
     }
 
     private func nextProgressID() -> Int {
-        (progresses.compactMap(\.id).max() ?? 0) + 1
+        (progresses.compactMap { $0.id }.max() ?? 0) + 1
     }
 
     // MARK: - Cache

@@ -24,6 +24,15 @@ struct ProjectUIDesignApp: App {
                 }
             }
             .environmentObject(store)
+            .onAppear {
+                store.syncSessionMode()
+            }
+            .onChange(of: auth.isDemoMode) { _, _ in
+                store.syncSessionMode()
+            }
+            .onChange(of: auth.token) { _, _ in
+                store.syncSessionMode()
+            }
         }
     }
 }

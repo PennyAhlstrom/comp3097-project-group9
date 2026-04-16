@@ -79,7 +79,7 @@ struct CourseDetailView: View {
                     .padding()
                     .confirmationDialog("Delete this course?", isPresented: $showDeleteConfirm) {
                         Button("Delete", role: .destructive) {
-                            Task {
+                            _Concurrency.Task {
                                 await store.deleteCourse(id: courseID)
                             }
                         }

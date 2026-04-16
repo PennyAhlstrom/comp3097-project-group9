@@ -71,7 +71,7 @@ struct ReminderAddView: View {
 
         isSubmitting = true
 
-        Task {
+        _Concurrency.Task {
             await store.addReminder(newReminder)
             isSubmitting = false
 

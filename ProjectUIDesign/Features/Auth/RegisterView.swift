@@ -65,7 +65,7 @@ struct RegisterView: View {
         errorMessage = nil
         isSubmitting = true
 
-        Task {
+        _Concurrency.Task {
             defer { isSubmitting = false }
 
             do {

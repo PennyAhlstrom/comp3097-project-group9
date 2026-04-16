@@ -60,7 +60,7 @@ struct TaskDetailView: View {
                     .padding()
                     .confirmationDialog("Delete this task?", isPresented: $showDeleteConfirm) {
                         Button("Delete", role: .destructive) {
-                            Task {
+                            _Concurrency.Task {
                                 await store.deleteTask(id: taskID)
                             }
                         }

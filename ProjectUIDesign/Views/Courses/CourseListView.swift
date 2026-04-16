@@ -65,7 +65,7 @@ struct CourseListView: View {
                 isLoading: store.isLoading,
                 errorMessage: store.errorMessage,
                 onRetry: {
-                    Task {
+                    _Concurrency.Task {
                         await store.retryLoad(.courses)
                     }
                 },

@@ -73,7 +73,7 @@ struct CourseEditView: View {
 
         isSubmitting = true
 
-        Task {
+        _Concurrency.Task {
             await store.updateCourse(updated)
             isSubmitting = false
             if store.errorMessage == nil {

@@ -61,7 +61,7 @@ struct CourseAddView: View {
 
         isSubmitting = true
 
-        Task {
+        _Concurrency.Task {
             await store.addCourse(newCourse)
             isSubmitting = false
             if store.errorMessage == nil {
