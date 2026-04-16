@@ -8,12 +8,18 @@
 
 /* Begin PBXFileReference section */
 		D681D2E72F576456002F4FF6 /* ProjectUIDesign.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ProjectUIDesign.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D6ED558A2F908FFA00CBA560 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		D681D2E92F576456002F4FF6 /* ProjectUIDesign */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = ProjectUIDesign;
+			sourceTree = "<group>";
+		};
+		D6ED558C2F90902100CBA560 /* screenshots */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = screenshots;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -32,6 +38,8 @@
 		D681D2DE2F576456002F4FF6 = {
 			isa = PBXGroup;
 			children = (
+				D6ED558C2F90902100CBA560 /* screenshots */,
+				D6ED558A2F908FFA00CBA560 /* README.md */,
 				D681D2E92F576456002F4FF6 /* ProjectUIDesign */,
 				D681D2E82F576456002F4FF6 /* Products */,
 			);
